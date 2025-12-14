@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarklet Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8 flex items-start justify-center">
+
+    <div class="w-full max-w-4xl bg-white shadow-xl rounded-xl p-6 sm:p-10 border border-gray-100">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800">
+                Bookmarklet Generator
+            </h1>
+            <p class="mt-2 text-gray-500 text-lg">Turn JavaScript code into a one-click browser bookmark.</p>
+        </header>
+
+        <!-- Step 1: Input Code -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3 flex items-center">
+                1. Enter Your JavaScript Code
+            </h2>
+            <p class="text-sm text-gray-500 mb-2">The code will be automatically minified and wrapped in an IIFE.</p>
+            <textarea
+                id="js-input"
+                placeholder="Example: alert('Hello, Bookmarklet!');"
+                rows="8"
+                class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 font-mono text-sm"
+                spellcheck="false"
+            >
+let title = document.title;
+let newTitle = prompt('Enter a new title:', title);
+if (newTitle !== null && newTitle.trim() !== '') {
+    document.title = newTitle;
+}</textarea>
+        </section>
+
+        <!-- Step 2: Generation Button -->
+        <div class="mb-10 flex flex-col sm:flex-row items-center justify-between">
+            <button
+                onclick="generateBookmarklet()"
+                class="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 transform hover:scale-[1.02]"
+            >
+                Generate Bookmarklet URL
+            </button>
+            <p id="message-box" class="mt-4 sm:mt-0 sm:ml-4 text-sm text-gray-600 hidden">
+                Success! Ready to copy or drag.
+            </p>
+        </div>
+
+        <!-- Step 3: Output and Drag Link -->
+        <section id="output-section" class="hidden">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3 flex items-center">
+                2. Use Your Bookmarklet
+            </h2>
+            <div class="mb-4">
+                <p class="text-sm text-gray-500 mb-2">
+                    <span class="font-bold text-red-600">Drag this link</span> to your browser's bookmarks bar, or use the copy button below.
+                </p>
+                <a id="drag-me-link" href="#"
+                    class="block text-center py-3 bg-green-500 text-white font-extrabold text-lg rounded-xl shadow-md border-2 border-green-600 hover:bg-green-600 transition duration-200 cursor-grab active:cursor-grabbing"
+                    draggable="true"
+                    title="Drag me to your bookmarks bar!"
+                >
+                    <span class="inline-block transform hover:rotate-1 transition duration-150">
+                        🔗 Drag Me To Bookmarks
+                    </span>
+                </a>
+            </div>
+
+            <h3 class="text-lg font-medium text-gray-700 mb-2">Generated URL:</h3>
+            <div class="relative">
+                <textarea
+                    id="bookmarklet-output"
+                    rows="5"
+                    readonly
+                    class="w-full p-4 border border-gray-300 bg-gray-50 rounded-lg text-xs break-all font-mono select-all overflow-y-scroll"
+                    placeholder="Bookmarklet URL will appear here..."
+                ></textarea>
+                <button
+                    id="copy-button"
+                    onclick="copyToClipboard()"
+                    class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white text-xs font-medium rounded-md hover:bg-gray-800 transition duration-150 opacity-0 pointer-events-none"
+                >
+                    Copy to Clipboard
+                </button>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        /**
+         * Converts raw JavaScript into a minified, encoded bookmarklet URL.
+         */
+        function generateBookmarklet() {
+            const rawCode = document.getElementById('js-input').value;
+            const outputElement = document.getElementById('bookmarklet-output');
+            const dragLink = document.getElementById('drag-me-link');
+            const outputSection = document.getElementById('output-section');
+            const messageBox = document.getElementById('message-box');
+
+            if (!rawCode.trim()) {
+                outputElement.value = 'Please enter some JavaScript code.';
+                outputSection.classList.add('hidden');
+                messageBox.classList.add('hidden');
+                return;
+            }
+
+            // 1. Minification: Remove comments and excessive whitespace
+            let minifiedCode = rawCode
+                // Remove multiline comments (/* ... */)
+                .replace(/\/\*[\s\S]*?\*\//g, '')
+                // Remove single-line comments (// ...) but preserve code before it
+                .replace(/([:;,\{\}\(\[])\/\/[^\n]*/g, '$1')
+                .replace(/\n\s*\/\/[^\n]*/g, '')
+                // Remove leading/trailing whitespace from the whole script
+                .trim()
+                // Replace newlines and tabs with a single space
+                .replace(/[\n\t]/g, ' ')
+                // Replace multiple spaces with a single space (aggressive minification)
+                .replace(/ +/g, ' ')
+                // Remove spaces around common operators and punctuation (further minification)
+                .replace(/ ?([!=+\-\*\/%&|\^~?:,;]) ?/g, '$1')
+                .replace(/ \{/g, '{') // Remove space before opening brace
+                .replace(/\} /g, '}'); // Remove space after closing brace
+
+
+            // 2. Wrap the code in an IIFE (Immediately Invoked Function Expression)
+            // This is standard practice to prevent global scope pollution.
+            const iife = `void(0);${minifiedCode}`;
+
+            // 3. URL Encode the JavaScript code
+            const encodedCode = encodeURIComponent(iife);
+
+            // 4. Prepend the protocol
+            const bookmarkletUrl = `javascript:${encodedCode}`;
+
+            // 5. Update UI
+            outputElement.value = bookmarkletUrl;
+            dragLink.href = bookmarkletUrl;
+            dragLink.title = `javascript:${minifiedCode}`; // Give the link a useful title
+            outputSection.classList.remove('hidden');
+            messageBox.textContent = 'Success! Ready to copy or drag.';
+            messageBox.classList.remove('hidden');
+
+            // Reset copy button
+            const copyButton = document.getElementById('copy-button');
+            copyButton.textContent = 'Copy to Clipboard';
+            copyButton.classList.remove('bg-green-600', 'bg-red-600');
+            copyButton.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        /**
+         * Copies the content of the output textarea to the clipboard.
+         */
+        function copyToClipboard() {
+            const outputElement = document.getElementById('bookmarklet-output');
+            const copyButton = document.getElementById('copy-button');
+
+            try {
+                // Select the text in the textarea
+                outputElement.select();
+                outputElement.setSelectionRange(0, 99999); // For mobile devices
+
+                // Use document.execCommand('copy') for better compatibility in iframes
+                document.execCommand('copy');
+
+                copyButton.textContent = 'Copied!';
+                copyButton.classList.remove('bg-gray-700');
+                copyButton.classList.add('bg-green-600');
+            } catch (err) {
+                // Fallback for environments where execCommand fails
+                copyButton.textContent = 'Copy Failed.';
+                copyButton.classList.remove('bg-gray-700');
+                copyButton.classList.add('bg-red-600');
+                console.error('Failed to copy text: ', err);
+            }
+
+            // Deselect the text after a brief delay
+            setTimeout(() => {
+                outputElement.setSelectionRange(0, 0);
+                outputElement.blur();
+            }, 300);
+        }
+
+        // Generate the default bookmarklet on load
+        window.onload = generateBookmarklet;
+    </script>
+</body>
+</html>
