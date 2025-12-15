@@ -1,0 +1,2481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VenueTrack - Inventory & Tech Check</title>
+    <meta name="description" content="PWA for venue inventory management and tech checks">
+    <meta name="theme-color" content="#3f51b5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="manifest" id="manifest">
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --primary-light: #757de8;
+            --primary-dark: #002984;
+            --secondary-color: #f50057;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+        }
+        
+        /* PWA Styles */
+        @media (display-mode: standalone) {
+            header {
+                padding-top: env(safe-area-inset-top);
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Material Design inspired shadows */
+        .shadow-material-1 {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+        
+        .shadow-material-2 {
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        }
+        
+        .shadow-material-3 {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+        }
+        
+        .shadow-material-4 {
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        /* Status badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-deployed {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+        }
+        
+        .status-reserve {
+            background-color: rgba(33, 150, 243, 0.1);
+            color: #1565c0;
+        }
+        
+        .status-broken {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #c62828;
+        }
+        
+        .status-service {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #ef6c00;
+        }
+        
+        /* iPhone 13 Pro specific optimizations */
+        @media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
+            .safe-area-top {
+                padding-top: 47px;
+            }
+            
+            .safe-area-bottom {
+                padding-bottom: 34px;
+            }
+        }
+        
+        /* QR Code styling */
+        #qrcode canvas {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        /* Bottom Navigation Island */
+        .bottom-nav-island {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.1);
+            padding: 12px;
+            z-index: 40;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            min-width: 300px;
+            max-width: 400px;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 8px;
+            border-radius: 16px;
+            color: #6b7280;
+            transition: all 0.2s ease;
+            min-width: 60px;
+        }
+        
+        .nav-item.active {
+            background: rgba(63, 81, 181, 0.1);
+            color: #3f51b5;
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .nav-item:hover {
+            background: rgba(63, 81, 181, 0.05);
+        }
+        
+        /* Main content padding for bottom nav */
+        main {
+            padding-bottom: 100px;
+        }
+        
+        /* Modal with sticky footer */
+        .modal-container {
+            display: flex;
+            flex-direction: column;
+            max-height: 85vh;
+        }
+        
+        .modal-header {
+            flex-shrink: 0;
+        }
+        
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .modal-footer {
+            flex-shrink: 0;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+            margin: -1.5rem;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+    <!-- PWA Install Prompt -->
+    <div id="installPrompt" class="hidden fixed bottom-0 left-0 right-0 bg-white p-4 shadow-material-4 z-50">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-box text-2xl text-primary mr-3"></i>
+                <div>
+                    <p class="font-medium">Install VenueTrack</p>
+                    <p class="text-sm text-gray-600">Get quick access to your inventory</p>
+                </div>
+            </div>
+            <div>
+                <button id="installCancel" class="px-4 py-2 text-gray-600 mr-2">Not Now</button>
+                <button id="installConfirm" class="px-4 py-2 bg-primary text-white rounded-lg">Install</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Header -->
+    <header class="bg-white shadow-material-1 sticky top-0 z-30 safe-area-top">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <h1 id="companyHeader" class="text-xl font-bold text-gray-900">VenueTrack</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Save Journal Button (shown when journal loaded) -->
+                    <button id="saveJournalBtn" class="hidden px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center">
+                        <i class="fas fa-save mr-2"></i> Save Journal
+                    </button>
+                    
+                    <!-- Load Journal Button (shown when no journal loaded) -->
+                    <button id="loadJournalHeaderBtn" class="px-4 py-2 bg-primary text-white rounded-lg flex items-center">
+                        <i class="fas fa-folder-open mr-2"></i> Load Journal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="container mx-auto px-4 py-6">
+        <!-- Dashboard View -->
+        <div id="dashboardView" class="fade-in">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-material-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Items</p>
+                            <p id="totalItems" class="text-3xl font-bold mt-2">0</p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-cubes text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-material-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm">Deployed</p>
+                            <p id="deployedItems" class="text-3xl font-bold mt-2 text-green-600">0</p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-material-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm">Needs Attention</p>
+                            <p id="attentionItems" class="text-3xl font-bold mt-2 text-orange-600">0</p>
+                        </div>
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <i class="fas fa-exclamation-triangle text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-material-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm">Venues</p>
+                            <p id="totalVenues" class="text-3xl font-bold mt-2">0</p>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-building text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-material-1">
+                    <h3 class="font-bold text-lg mb-4">Quick Actions</h3>
+                    <div class="space-y-4">
+                        <button id="quickAddItem" class="w-full flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                            <div class="bg-primary text-white p-3 rounded-full mr-4">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-medium">Add New Item</p>
+                                <p class="text-sm text-gray-500">Add equipment to inventory</p>
+                            </div>
+                        </button>
+                        
+                        <button id="quickTechCheck" class="w-full flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                            <div class="bg-green-500 text-white p-3 rounded-full mr-4">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-medium">Start Tech Check</p>
+                                <p class="text-sm text-gray-500">Verify equipment status</p>
+                            </div>
+                        </button>
+                        
+                        <button id="quickAddVenue" class="w-full flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                            <div class="bg-purple-500 text-white p-3 rounded-full mr-4">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-medium">Add New Venue</p>
+                                <p class="text-sm text-gray-500">Add a new venue location</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-material-1">
+                    <h3 class="font-bold text-lg mb-4">Recent Activity</h3>
+                    <div id="recentActivity" class="space-y-4">
+                        <div class="text-gray-500 text-center py-8">
+                            <i class="fas fa-history text-3xl mb-3"></i>
+                            <p>No recent activity</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Load Journal Prompt -->
+            <div id="loadJournalPrompt" class="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                <i class="fas fa-folder-open text-4xl text-blue-500 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">No Journal Loaded</h3>
+                <p class="text-gray-600 mb-4">Load a company journal to start managing your inventory</p>
+                <button id="promptLoadJournalBtn" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                    <i class="fas fa-folder-open mr-2"></i> Load Journal
+                </button>
+            </div>
+        </div>
+        
+        <!-- Inventory Management View -->
+        <div id="inventoryView" class="hidden fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Inventory Management</h2>
+                <button id="addItemBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Add Item
+                </button>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-material-1 mb-6">
+                <div class="p-4 border-b">
+                    <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0">
+                        <div class="flex-grow">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="searchInventory" placeholder="Search by ID, brand, model..." class="pl-10 pr-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-4">
+                            <select id="filterStatus" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                <option value="">All Status</option>
+                                <option value="DEPLOYED">Deployed</option>
+                                <option value="RESERVE">Reserve</option>
+                                <option value="BROKEN">Broken</option>
+                                <option value="SERVICE">Service</option>
+                            </select>
+                            
+                            <select id="filterVenue" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                <option value="">All Venues</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="inventoryList" class="p-4">
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-box-open text-4xl mb-4"></i>
+                        <p class="text-lg">No inventory items found</p>
+                        <p class="mt-2">Add your first item or load a Journal file</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-gray-500 text-sm">
+                <p><i class="fas fa-info-circle mr-1"></i> Inventory items are automatically saved to your browser's local storage</p>
+            </div>
+        </div>
+        
+        <!-- Venues Management View -->
+        <div id="venuesView" class="hidden fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Venues Management</h2>
+                <button id="addVenueBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Add Venue
+                </button>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Venue cards will be dynamically inserted here -->
+                <div id="venuesList" class="col-span-full">
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-building text-4xl mb-4"></i>
+                        <p class="text-lg">No venues found</p>
+                        <p class="mt-2">Add your first venue</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-6 shadow-material-1">
+                <h3 class="font-bold text-lg mb-4">Venue Assignment Summary</h3>
+                <div id="venueAssignmentChart" class="h-64 flex items-center justify-center text-gray-500">
+                    <p>No data available. Add venues and assign inventory items.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tech Check Wizard View -->
+        <div id="techCheckView" class="hidden fade-in">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl shadow-material-2 p-6 mb-8">
+                    <h2 class="text-2xl font-bold mb-2">Tech Check Wizard</h2>
+                    <p class="text-gray-600 mb-6">Step-by-step equipment verification for your venues</p>
+                    
+                    <div class="mb-8">
+                        <div class="flex items-center mb-6">
+                            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">1</div>
+                            <div class="ml-4">
+                                <h3 class="font-bold">Select Venue</h3>
+                                <p class="text-gray-600 text-sm">Choose a venue to perform tech check on</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="techCheckVenues">
+                            <!-- Venue selection buttons will be added here -->
+                            <div class="col-span-full text-center py-8 text-gray-500">
+                                <i class="fas fa-map-marker-alt text-3xl mb-3"></i>
+                                <p>No venues available for tech check</p>
+                                <p class="text-sm mt-1">Add venues and assign inventory items first</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8 hidden" id="techCheckStep2">
+                        <div class="flex items-center mb-6">
+                            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">2</div>
+                            <div class="ml-4">
+                                <h3 class="font-bold">Verify Equipment</h3>
+                                <p class="text-gray-600 text-sm">Check each item at the selected venue</p>
+                            </div>
+                        </div>
+                        
+                        <div id="techCheckItems" class="space-y-4">
+                            <!-- Tech check items will be added here -->
+                        </div>
+                        
+                        <div class="mt-8 flex justify-between">
+                            <button id="techCheckBack" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
+                                <i class="fas fa-arrow-left mr-2"></i> Back to Venue Selection
+                            </button>
+                            <button id="techCheckComplete" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                                Complete Tech Check
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="hidden" id="techCheckCompleteStep">
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-check text-3xl text-green-500"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Tech Check Complete!</h3>
+                            <p class="text-gray-600 mb-6">The equipment status has been updated for <span id="completedVenueName" class="font-bold"></span></p>
+                            <div class="flex justify-center space-x-4">
+                                <button id="techCheckNew" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
+                                    Start New Tech Check
+                                </button>
+                                <button id="techCheckViewReport" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                                    View Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-gray-500 text-sm">
+                    <p><i class="fas fa-lightbulb mr-1"></i> Tech checks help ensure all equipment is accounted for and in working order before events.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation Island -->
+        <div class="bottom-nav-island">
+            <button class="nav-item active" data-tab="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </button>
+            <button class="nav-item" data-tab="techcheck">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Tech Check</span>
+            </button>
+            <button class="nav-item" data-tab="inventory">
+                <i class="fas fa-cubes"></i>
+                <span>Inventory</span>
+            </button>
+            <button class="nav-item" data-tab="venues">
+                <i class="fas fa-building"></i>
+                <span>Venues</span>
+            </button>
+            <button id="bottomMenuBtn" class="nav-item">
+                <i class="fas fa-ellipsis-h"></i>
+                <span>Menu</span>
+            </button>
+        </div>
+        
+        <!-- Side Menu -->
+        <div id="sideMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-material-4 transform translate-x-full transition-transform z-50">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-bold text-lg">Menu</h3>
+                    <button id="closeMenuBtn" class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-2">
+                    <div class="px-3 py-2 bg-gray-100 rounded-lg mb-4">
+                        <p class="text-gray-500 text-sm">Current Company</p>
+                        <p id="menuCompanyName" class="font-medium">None loaded</p>
+                    </div>
+                    
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="dashboard">
+                        <i class="fas fa-tachometer-alt mr-3 text-gray-500"></i> Dashboard
+                    </button>
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="inventory">
+                        <i class="fas fa-cubes mr-3 text-gray-500"></i> Inventory
+                    </button>
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="venues">
+                        <i class="fas fa-building mr-3 text-gray-500"></i> Venues
+                    </button>
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="techcheck">
+                        <i class="fas fa-clipboard-check mr-3 text-gray-500"></i> Tech Check
+                    </button>
+                    <hr class="my-4">
+                    <button id="menuExport" class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-file-export mr-3 text-gray-500"></i> Export Journal
+                    </button>
+                    <button id="menuImport" class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-file-import mr-3 text-gray-500"></i> Load Journal
+                    </button>
+                    <button id="menuClearData" class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100 text-red-500">
+                        <i class="fas fa-trash-alt mr-3"></i> Clear All Data
+                    </button>
+                </div>
+                
+                <div class="mt-10 pt-6 border-t">
+                    <p class="text-gray-500 text-xs">VenueTrack v1.0 • PWA</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Backdrop -->
+        <div id="modalBackdrop" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+        
+        <!-- Add/Edit Item Modal -->
+        <div id="itemModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-md z-50">
+            <div class="modal-container p-6">
+                <div class="modal-header flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold" id="itemModalTitle">Add Inventory Item</h3>
+                    <button id="closeItemModal" class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="itemForm" class="modal-body space-y-4">
+                    <input type="hidden" id="itemId">
+                    
+                    <!-- Image at the top -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Item Image</label>
+                        <div class="mt-1">
+                            <div class="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center mb-4 overflow-hidden" id="itemImagePreview">
+                                <i class="fas fa-camera text-gray-400 text-4xl"></i>
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <input type="file" id="itemImage" accept="image/*" class="hidden">
+                                <button type="button" id="itemImageBtn" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg mr-2">
+                                    <i class="fas fa-upload mr-2"></i> Choose Image
+                                </button>
+                                <button type="button" id="itemImageRemoveBtn" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg hidden">
+                                    <i class="fas fa-trash mr-2"></i> Remove
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 text-center">Optional. Max 2MB. Image will be stored in the journal.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Unique Identifier with QR button -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="itemUniqueId">Unique Identifier *</label>
+                        <div class="flex">
+                            <input type="text" id="itemUniqueId" class="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                            <button type="button" id="qrCodeBtn" class="px-4 py-2 bg-gray-100 border border-l-0 rounded-r-lg hover:bg-gray-200">
+                                <i class="fas fa-qrcode"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Unique identifier for this item</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1" for="itemBrand">Brand</label>
+                            <input type="text" id="itemBrand" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1" for="itemModel">Model</label>
+                            <input type="text" id="itemModel" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="itemCategories">Categories</label>
+                        <div class="flex flex-wrap gap-2 mb-2" id="selectedCategories">
+                            <!-- Selected categories will appear here -->
+                        </div>
+                        <div class="flex">
+                            <select id="itemCategorySelect" class="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                <option value="">Select a category</option>
+                                <option value="Moving Head">Moving Head</option>
+                                <option value="Turntable">Turntable</option>
+                                <option value="Cable">Cable</option>
+                                <option value="PSU">PSU</option>
+                                <option value="Controller">Controller</option>
+                                <option value="Lighting">Lighting</option>
+                                <option value="Audio">Audio</option>
+                                <option value="Video">Video</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <button type="button" id="addCategoryBtn" class="px-4 py-2 bg-gray-100 border border-l-0 rounded-r-lg hover:bg-gray-200">Add</button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Multiple categories can be assigned</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="itemStatus">Status *</label>
+                        <select id="itemStatus" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                            <option value="">Select status</option>
+                            <option value="DEPLOYED">Deployed</option>
+                            <option value="RESERVE">Reserve</option>
+                            <option value="BROKEN">Broken</option>
+                            <option value="SERVICE">Service</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="itemVenue">Assigned Venue</label>
+                        <select id="itemVenue" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Unassigned</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="itemComment">Comment</label>
+                        <textarea id="itemComment" rows="3" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Notes about this item..."></textarea>
+                    </div>
+                </form>
+                
+                <div class="modal-footer">
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" id="cancelItemBtn" class="px-6 py-2 border rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="submit" id="submitItemBtn" form="itemForm" class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
+                            <i class="fas fa-save mr-2"></i> Save Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- QR Code Modal -->
+        <div id="qrCodeModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-md z-50">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">QR Code Label</h3>
+                    <button id="closeQrCodeModal" class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="text-center mb-6">
+                    <div id="qrcode" class="flex justify-center mb-4"></div>
+                    <p class="font-medium text-lg" id="qrItemId"></p>
+                    <p class="text-gray-600 text-sm" id="qrItemDetails"></p>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                    <h4 class="font-bold mb-2">Print Instructions</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>1. Use sticker paper (A4, 8-12 labels per sheet)</li>
+                        <li>2. Set printer margins to minimum</li>
+                        <li>3. Print at 100% scale</li>
+                        <li>4. Apply labels to equipment</li>
+                    </ul>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button id="printQrCodeBtn" class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
+                        <i class="fas fa-print mr-2"></i> Print
+                    </button>
+                    <button id="downloadQrCodeBtn" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
+                        <i class="fas fa-download mr-2"></i> Download
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add/Edit Venue Modal -->
+        <div id="venueModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-md z-50">
+            <div class="modal-container p-6">
+                <div class="modal-header flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold" id="venueModalTitle">Add Venue</h3>
+                    <button id="closeVenueModal" class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="venueForm" class="modal-body space-y-4">
+                    <input type="hidden" id="venueId">
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="venueName">Venue Name *</label>
+                        <input type="text" id="venueName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="venueAddress">Address</label>
+                        <input type="text" id="venueAddress" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1" for="venueContact">Contact Person</label>
+                            <input type="text" id="venueContact" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-1" for="venuePhone">Phone</label>
+                            <input type="text" id="venuePhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="venueNotes">Notes</label>
+                        <textarea id="venueNotes" rows="3" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Additional information about this venue..."></textarea>
+                    </div>
+                </form>
+                
+                <div class="modal-footer">
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" id="cancelVenueBtn" class="px-6 py-2 border rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="submit" id="submitVenueBtn" form="venueForm" class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
+                            <i class="fas fa-save mr-2"></i> Save Venue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tech Check Report Modal -->
+        <div id="reportModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto z-50">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Tech Check Report</h3>
+                    <button id="closeReportModal" class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div id="reportContent">
+                    <!-- Report content will be generated here -->
+                </div>
+                
+                <div class="mt-8 pt-6 border-t">
+                    <div class="flex justify-end">
+                        <button id="printReportBtn" class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
+                            <i class="fas fa-print mr-2"></i> Print Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- File Input for Journal Loading (Hidden) -->
+    <input type="file" id="journalFileInput" accept=".json" class="hidden">
+
+    <!-- Service Worker Registration and App Script -->
+    <script>
+        // Generate a simple manifest for PWA
+        const manifest = {
+            "name": "VenueTrack - Inventory Manager",
+            "short_name": "VenueTrack",
+            "description": "PWA for venue inventory management and tech checks",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#3f51b5",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzYiIGZpbGw9IiMzRjUxQjUiLz4KPHBhdGggZD0iTTk2IDQ2QzExMS40NjQgNDYgMTI0IDU4LjUzNiAxMjQgNzRWNjRDMTI0IDQ4LjUzNiAxMTEuNDY0IDM2IDk2IDM2QzgwLjUzNiAzNiA2OCA0OC41MzYgNjggNjRWNzRDNjggNTguNTM2IDgwLjUzNiA0NiA5NiA0NloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik03MiAxMjhIMTIwQzEzMi44IDExOC40IDE0NCAxMDcuMiAxNDQgOTZDMTQ0IDY4LjggMTIxLjIgNDggOTIgNDhDNTcuNiA0OCAzMiA3My42IDMyIDEwNEMzMiAxMjEuNiA0OC42IDEzNiA2OCAxMzZINzJWMjBIMTI4VjEzNkgxMzJIMTQ4VjE1MkgxMTJWMTkySDgwVjE1Mkg0NFYxMzZINjBWNzJINzJWMTI4WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==",
+                    "sizes": "192x192",
+                    "type": "image/svg+xml"
+                }
+            ]
+        };
+        
+        // Set the manifest
+        document.getElementById('manifest').setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest)));
+        
+        // Simple QR Code Generator (minimal implementation)
+        class SimpleQRCode {
+            static generate(text, size = 200) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = size;
+                canvas.height = size;
+                
+                // Clear canvas
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, size, size);
+                
+                // Generate a simple pattern based on text hash
+                const hash = this.hashCode(text);
+                const seed = hash;
+                
+                // Draw QR pattern
+                ctx.fillStyle = 'black';
+                const moduleSize = Math.floor(size / 21);
+                const offset = Math.floor((size - (moduleSize * 21)) / 2);
+                
+                // Position patterns
+                this.drawPositionPattern(ctx, offset, offset, moduleSize);
+                this.drawPositionPattern(ctx, offset + moduleSize * 14, offset, moduleSize);
+                this.drawPositionPattern(ctx, offset, offset + moduleSize * 14, moduleSize);
+                
+                // Generate data based on hash
+                const rng = this.seededRandom(seed);
+                
+                for (let y = 0; y < 21; y++) {
+                    for (let x = 0; x < 21; x++) {
+                        if ((x < 8 && y < 8) || (x > 12 && y < 8) || (x < 8 && y > 12)) {
+                            continue;
+                        }
+                        
+                        if (rng() > 0.5) {
+                            ctx.fillRect(
+                                offset + x * moduleSize, 
+                                offset + y * moduleSize, 
+                                moduleSize, 
+                                moduleSize
+                            );
+                        }
+                    }
+                }
+                
+                // Add text at the bottom
+                ctx.fillStyle = 'black';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(text, size/2, size - 10);
+                
+                return canvas;
+            }
+            
+            static drawPositionPattern(ctx, x, y, size) {
+                ctx.fillRect(x, y, size * 7, size * 7);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(x + size, y + size, size * 5, size * 5);
+                ctx.fillStyle = 'black';
+                ctx.fillRect(x + size * 2, y + size * 2, size * 3, size * 3);
+            }
+            
+            static hashCode(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                return hash;
+            }
+            
+            static seededRandom(seed) {
+                let value = seed;
+                return function() {
+                    value = (value * 9301 + 49297) % 233280;
+                    return value / 233280;
+                };
+            }
+            
+            static download(canvas, filename) {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+        
+        // App State
+        const AppState = {
+            company: null,
+            venues: [],
+            items: [],
+            currentTechCheck: null,
+            recentActivity: [],
+            currentView: 'dashboard',
+            
+            // Initialize from localStorage
+            init() {
+                const savedCompany = localStorage.getItem('venueTrack_company');
+                const savedVenues = localStorage.getItem('venueTrack_venues');
+                const savedItems = localStorage.getItem('venueTrack_items');
+                const savedActivity = localStorage.getItem('venueTrack_activity');
+                
+                if (savedCompany) this.company = JSON.parse(savedCompany);
+                if (savedVenues) this.venues = JSON.parse(savedVenues);
+                if (savedItems) this.items = JSON.parse(savedItems);
+                if (savedActivity) this.recentActivity = JSON.parse(savedActivity);
+                
+                this.updateUI();
+                this.updateHeader();
+            },
+            
+            // Update header based on journal state
+            updateHeader() {
+                const companyHeader = document.getElementById('companyHeader');
+                const saveJournalBtn = document.getElementById('saveJournalBtn');
+                const loadJournalHeaderBtn = document.getElementById('loadJournalHeaderBtn');
+                
+                if (this.company) {
+                    companyHeader.textContent = this.company.name;
+                    saveJournalBtn.classList.remove('hidden');
+                    loadJournalHeaderBtn.classList.add('hidden');
+                } else {
+                    companyHeader.textContent = "VenueTrack";
+                    saveJournalBtn.classList.add('hidden');
+                    loadJournalHeaderBtn.classList.remove('hidden');
+                }
+            },
+            
+            // Save to localStorage
+            save() {
+                if (this.company) localStorage.setItem('venueTrack_company', JSON.stringify(this.company));
+                localStorage.setItem('venueTrack_venues', JSON.stringify(this.venues));
+                localStorage.setItem('venueTrack_items', JSON.stringify(this.items));
+                localStorage.setItem('venueTrack_activity', JSON.stringify(this.recentActivity));
+            },
+            
+            // Toggle load journal prompt visibility
+            toggleLoadJournalPrompt() {
+                const prompt = document.getElementById('loadJournalPrompt');
+                if (this.company) {
+                    prompt.classList.add('hidden');
+                } else {
+                    prompt.classList.remove('hidden');
+                }
+            },
+            
+            // Add activity log
+            logActivity(action, details) {
+                const timestamp = new Date().toISOString();
+                this.recentActivity.unshift({
+                    action,
+                    details,
+                    timestamp
+                });
+                
+                // Keep only last 10 activities
+                if (this.recentActivity.length > 10) {
+                    this.recentActivity = this.recentActivity.slice(0, 10);
+                }
+                
+                this.save();
+                this.updateActivityLog();
+            },
+            
+            // Update UI elements
+            updateUI() {
+                // Update counts
+                document.getElementById('totalItems').textContent = this.items.length;
+                document.getElementById('totalVenues').textContent = this.venues.length;
+                
+                const deployedCount = this.items.filter(item => item.status === 'DEPLOYED').length;
+                const attentionCount = this.items.filter(item => item.status === 'BROKEN' || item.status === 'SERVICE').length;
+                
+                document.getElementById('deployedItems').textContent = deployedCount;
+                document.getElementById('attentionItems').textContent = attentionCount;
+                
+                // Update venue filter dropdowns
+                this.updateVenueFilters();
+                
+                // Update views
+                this.updateInventoryList();
+                this.updateVenuesList();
+                this.updateActivityLog();
+                this.updateTechCheckVenues();
+                
+                // Toggle load journal prompt
+                this.toggleLoadJournalPrompt();
+                
+                // Update menu company name
+                document.getElementById('menuCompanyName').textContent = this.company ? this.company.name : 'None loaded';
+                
+                // Update header
+                this.updateHeader();
+            },
+            
+            // Update venue filter dropdowns
+            updateVenueFilters() {
+                const venueFilter = document.getElementById('filterVenue');
+                const itemVenueSelect = document.getElementById('itemVenue');
+                
+                // Clear existing options (except first)
+                while (venueFilter.options.length > 1) venueFilter.remove(1);
+                while (itemVenueSelect.options.length > 1) itemVenueSelect.remove(1);
+                
+                // Add venue options
+                this.venues.forEach(venue => {
+                    const option = document.createElement('option');
+                    option.value = venue.id;
+                    option.textContent = venue.name;
+                    venueFilter.appendChild(option.cloneNode(true));
+                    itemVenueSelect.appendChild(option);
+                });
+                
+                // Update tech check venues
+                this.updateTechCheckVenues();
+            },
+            
+            // Update inventory list
+            updateInventoryList(filterStatus = '', filterVenue = '', searchTerm = '') {
+                const inventoryList = document.getElementById('inventoryList');
+                
+                // Filter items
+                let filteredItems = this.items;
+                
+                if (filterStatus) {
+                    filteredItems = filteredItems.filter(item => item.status === filterStatus);
+                }
+                
+                if (filterVenue) {
+                    filteredItems = filteredItems.filter(item => item.venueId === filterVenue);
+                }
+                
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredItems = filteredItems.filter(item => 
+                        item.id.toLowerCase().includes(term) ||
+                        (item.brand && item.brand.toLowerCase().includes(term)) ||
+                        (item.model && item.model.toLowerCase().includes(term)) ||
+                        (item.comment && item.comment.toLowerCase().includes(term))
+                    );
+                }
+                
+                if (filteredItems.length === 0) {
+                    inventoryList.innerHTML = `
+                        <div class="text-center py-12 text-gray-500">
+                            <i class="fas fa-box-open text-4xl mb-4"></i>
+                            <p class="text-lg">No inventory items found</p>
+                            <p class="mt-2">Try adjusting your filters or add a new item</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Generate inventory list HTML
+                let html = '<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">';
+                
+                filteredItems.forEach(item => {
+                    const venue = this.venues.find(v => v.id === item.venueId);
+                    const statusClass = `status-${item.status.toLowerCase()}`;
+                    
+                    html += `
+                        <div class="bg-white border rounded-lg p-4 shadow-material-1 hover:shadow-material-2 transition-shadow">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-bold text-lg">${item.id}</h4>
+                                    <p class="text-gray-600 text-sm">${item.brand || ''} ${item.model || ''}</p>
+                                </div>
+                                <span class="status-badge ${statusClass}">${item.status}</span>
+                            </div>
+                            
+                            ${item.image ? `
+                                <div class="mb-3 h-32 bg-gray-100 rounded-lg overflow-hidden">
+                                    <img src="${item.image}" alt="${item.id}" class="w-full h-full object-cover">
+                                </div>
+                            ` : ''}
+                            
+                            <div class="mb-3">
+                                ${item.categories && item.categories.length > 0 ? 
+                                    `<div class="flex flex-wrap gap-1 mb-2">
+                                        ${item.categories.map(cat => `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${cat}</span>`).join('')}
+                                    </div>` : ''
+                                }
+                                ${item.comment ? `<p class="text-gray-700 text-sm">${item.comment}</p>` : ''}
+                            </div>
+                            
+                            <div class="flex justify-between items-center text-sm">
+                                <div>
+                                    ${venue ? `<span class="text-gray-600"><i class="fas fa-building mr-1"></i>${venue.name}</span>` : '<span class="text-gray-400">Unassigned</span>'}
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="qr-item-btn p-2 text-green-600 hover:bg-green-50 rounded" data-id="${item.id}" title="Generate QR Code">
+                                        <i class="fas fa-qrcode"></i>
+                                    </button>
+                                    <button class="edit-item-btn p-2 text-blue-600 hover:bg-blue-50 rounded" data-id="${item.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-item-btn p-2 text-red-600 hover:bg-red-50 rounded" data-id="${item.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                inventoryList.innerHTML = html;
+                
+                // Add event listeners to buttons
+                document.querySelectorAll('.edit-item-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.editItem(btn.dataset.id));
+                });
+                
+                document.querySelectorAll('.delete-item-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.deleteItem(btn.dataset.id));
+                });
+                
+                document.querySelectorAll('.qr-item-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.showQRCode(btn.dataset.id));
+                });
+            },
+            
+            // Show QR code for an item
+            showQRCode(itemId) {
+                const item = this.items.find(i => i.id === itemId);
+                if (!item) return;
+                
+                // Clear previous QR code
+                const qrContainer = document.getElementById('qrcode');
+                qrContainer.innerHTML = '';
+                
+                // Set item info
+                document.getElementById('qrItemId').textContent = item.id;
+                document.getElementById('qrItemDetails').textContent = `${item.brand || ''} ${item.model || ''}`.trim() || 'No details';
+                
+                // Generate QR code
+                const canvas = SimpleQRCode.generate(item.id, 200);
+                qrContainer.appendChild(canvas);
+                
+                // Show modal
+                this.showModal('qrCodeModal');
+                
+                // Setup download button
+                document.getElementById('downloadQrCodeBtn').onclick = () => {
+                    SimpleQRCode.download(canvas, `qr-code-${item.id}.png`);
+                };
+                
+                // Setup print button
+                document.getElementById('printQrCodeBtn').onclick = () => {
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write(`
+                        <html>
+                            <head>
+                                <title>QR Code - ${item.id}</title>
+                                <style>
+                                    body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
+                                    .label { margin: 20px; display: inline-block; }
+                                    .item-id { font-size: 18px; font-weight: bold; margin: 10px 0; }
+                                    .item-details { color: #666; margin-bottom: 20px; }
+                                    @media print {
+                                        body { margin: 0; }
+                                        .no-print { display: none; }
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <button class="no-print" onclick="window.print()" style="padding: 10px 20px; background: #3f51b5; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Print Labels</button>
+                                <div class="label">
+                                    <canvas id="qrCanvas"></canvas>
+                                    <div class="item-id">${item.id}</div>
+                                    <div class="item-details">${item.brand || ''} ${item.model || ''}</div>
+                                </div>
+                                <script>
+                                    const canvas = document.getElementById('qrCanvas');
+                                    const ctx = canvas.getContext('2d');
+                                    const img = new Image();
+                                    img.onload = function() {
+                                        canvas.width = 200;
+                                        canvas.height = 200;
+                                        ctx.drawImage(img, 0, 0, 200, 200);
+                                    };
+                                    img.src = '${canvas.toDataURL()}';
+                                <\/script>
+                            </body>
+                        </html>
+                    `);
+                    printWindow.document.close();
+                };
+            },
+            
+            // Update venues list
+            updateVenuesList() {
+                const venuesList = document.getElementById('venuesList');
+                
+                if (this.venues.length === 0) {
+                    venuesList.innerHTML = `
+                        <div class="text-center py-12 text-gray-500 col-span-full">
+                            <i class="fas fa-building text-4xl mb-4"></i>
+                            <p class="text-lg">No venues found</p>
+                            <p class="mt-2">Add your first venue</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Generate venues list HTML
+                let html = '';
+                
+                this.venues.forEach(venue => {
+                    const assignedItems = this.items.filter(item => item.venueId === venue.id).length;
+                    
+                    html += `
+                        <div class="bg-white border rounded-lg p-5 shadow-material-1 hover:shadow-material-2 transition-shadow">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="font-bold text-lg">${venue.name}</h4>
+                                    ${venue.address ? `<p class="text-gray-600 text-sm"><i class="fas fa-map-marker-alt mr-1"></i>${venue.address}</p>` : ''}
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="edit-venue-btn p-2 text-blue-600 hover:bg-blue-50 rounded" data-id="${venue.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-venue-btn p-2 text-red-600 hover:bg-red-50 rounded" data-id="${venue.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                ${venue.contact ? `<p class="text-gray-700 text-sm"><i class="fas fa-user mr-1"></i>${venue.contact}</p>` : ''}
+                                ${venue.phone ? `<p class="text-gray-700 text-sm"><i class="fas fa-phone mr-1"></i>${venue.phone}</p>` : ''}
+                                ${venue.notes ? `<p class="text-gray-700 text-sm mt-2">${venue.notes}</p>` : ''}
+                            </div>
+                            
+                            <div class="flex justify-between items-center text-sm">
+                                <div>
+                                    <span class="font-medium">${assignedItems}</span> item${assignedItems !== 1 ? 's' : ''} assigned
+                                </div>
+                                <button class="venue-tech-check-btn px-3 py-1 bg-primary hover:bg-primary-dark text-white rounded text-sm" data-id="${venue.id}">
+                                    <i class="fas fa-clipboard-check mr-1"></i> Tech Check
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                venuesList.innerHTML = html;
+                
+                // Add event listeners to edit/delete buttons
+                document.querySelectorAll('.edit-venue-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.editVenue(btn.dataset.id));
+                });
+                
+                document.querySelectorAll('.delete-venue-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.deleteVenue(btn.dataset.id));
+                });
+                
+                // Add event listeners to tech check buttons
+                document.querySelectorAll('.venue-tech-check-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.startTechCheck(btn.dataset.id));
+                });
+            },
+            
+            // Update activity log
+            updateActivityLog() {
+                const activityLog = document.getElementById('recentActivity');
+                
+                if (this.recentActivity.length === 0) {
+                    activityLog.innerHTML = `
+                        <div class="text-gray-500 text-center py-8">
+                            <i class="fas fa-history text-3xl mb-3"></i>
+                            <p>No recent activity</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                
+                this.recentActivity.forEach(activity => {
+                    const date = new Date(activity.timestamp);
+                    const timeString = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const dateString = date.toLocaleDateString();
+                    
+                    html += `
+                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
+                            <div class="bg-primary text-white p-2 rounded-full mr-3">
+                                <i class="fas fa-${this.getActivityIcon(activity.action)} text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">${activity.action}</p>
+                                <p class="text-gray-600 text-sm">${activity.details}</p>
+                                <p class="text-gray-500 text-xs mt-1">${dateString} ${timeString}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                activityLog.innerHTML = html;
+            },
+            
+            // Get icon for activity type
+            getActivityIcon(action) {
+                if (action.includes('Added')) return 'plus';
+                if (action.includes('Updated')) return 'edit';
+                if (action.includes('Deleted')) return 'trash';
+                if (action.includes('Tech Check')) return 'clipboard-check';
+                if (action.includes('Loaded')) return 'folder-open';
+                if (action.includes('Exported')) return 'file-export';
+                return 'history';
+            },
+            
+            // Update tech check venues
+            updateTechCheckVenues() {
+                const techCheckVenues = document.getElementById('techCheckVenues');
+                const venuesWithItems = this.venues.filter(venue => 
+                    this.items.some(item => item.venueId === venue.id)
+                );
+                
+                if (venuesWithItems.length === 0) {
+                    techCheckVenues.innerHTML = `
+                        <div class="col-span-full text-center py-8 text-gray-500">
+                            <i class="fas fa-map-marker-alt text-3xl mb-3"></i>
+                            <p>No venues available for tech check</p>
+                            <p class="text-sm mt-1">Add venues and assign inventory items first</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                
+                venuesWithItems.forEach(venue => {
+                    const itemCount = this.items.filter(item => item.venueId === venue.id).length;
+                    
+                    html += `
+                        <button class="tech-check-venue-btn p-6 bg-white border rounded-xl shadow-material-1 hover:shadow-material-2 transition-shadow text-left" data-id="${venue.id}">
+                            <div class="flex items-start">
+                                <div class="bg-primary text-white p-3 rounded-full mr-4">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg">${venue.name}</h4>
+                                    <p class="text-gray-600 text-sm mt-1">${itemCount} item${itemCount !== 1 ? 's' : ''} to check</p>
+                                    ${venue.address ? `<p class="text-gray-500 text-xs mt-2"><i class="fas fa-map-marker-alt mr-1"></i>${venue.address}</p>` : ''}
+                                </div>
+                            </div>
+                        </button>
+                    `;
+                });
+                
+                techCheckVenues.innerHTML = html;
+                
+                // Add event listeners to tech check venue buttons
+                document.querySelectorAll('.tech-check-venue-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.startTechCheck(btn.dataset.id));
+                });
+            },
+            
+            // Start tech check for a venue
+            startTechCheck(venueId) {
+                const venue = this.venues.find(v => v.id === venueId);
+                if (!venue) return;
+                
+                this.currentTechCheck = {
+                    venueId: venue.id,
+                    venueName: venue.name,
+                    items: [],
+                    startTime: new Date().toISOString()
+                };
+                
+                // Get all items assigned to this venue
+                const venueItems = this.items.filter(item => item.venueId === venueId);
+                
+                // Switch to tech check view
+                this.showView('techcheck');
+                
+                // Show step 2
+                document.getElementById('techCheckStep2').classList.remove('hidden');
+                document.getElementById('techCheckCompleteStep').classList.add('hidden');
+                
+                // Set venue name in step 2
+                document.getElementById('completedVenueName').textContent = venue.name;
+                
+                // Generate tech check items
+                const techCheckItems = document.getElementById('techCheckItems');
+                let html = '';
+                
+                venueItems.forEach((item, index) => {
+                    html += `
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-bold">${item.id}</h4>
+                                    <p class="text-gray-600 text-sm">${item.brand || ''} ${item.model || ''}</p>
+                                    ${item.categories && item.categories.length > 0 ? 
+                                        `<div class="flex flex-wrap gap-1 mt-1">
+                                            ${item.categories.map(cat => `<span class="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">${cat}</span>`).join('')}
+                                        </div>` : ''
+                                    }
+                                </div>
+                                <span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="block text-sm font-medium mb-2">Status after check:</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="status_${item.id}" value="DEPLOYED" ${item.status === 'DEPLOYED' ? 'checked' : ''} class="mr-2">
+                                        <span class="status-badge status-deployed">Deployed</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="status_${item.id}" value="RESERVE" ${item.status === 'RESERVE' ? 'checked' : ''} class="mr-2">
+                                        <span class="status-badge status-reserve">Reserve</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="status_${item.id}" value="BROKEN" ${item.status === 'BROKEN' ? 'checked' : ''} class="mr-2">
+                                        <span class="status-badge status-broken">Broken</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="status_${item.id}" value="SERVICE" ${item.status === 'SERVICE' ? 'checked' : ''} class="mr-2">
+                                        <span class="status-badge status-service">Service</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Check Notes (optional):</label>
+                                <textarea class="w-full px-3 py-2 border rounded-lg text-sm tech-check-notes" data-id="${item.id}" placeholder="Any notes about this item's condition..."></textarea>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                techCheckItems.innerHTML = html;
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            },
+            
+            // Complete tech check
+            completeTechCheck() {
+                if (!this.currentTechCheck) return;
+                
+                const venueId = this.currentTechCheck.venueId;
+                const venueItems = this.items.filter(item => item.venueId === venueId);
+                let changesMade = false;
+                
+                // Update each item's status based on radio buttons
+                venueItems.forEach(item => {
+                    const radioGroup = document.querySelector(`input[name="status_${item.id}"]:checked`);
+                    const notesField = document.querySelector(`.tech-check-notes[data-id="${item.id}"]`);
+                    
+                    if (radioGroup && radioGroup.value !== item.status) {
+                        item.status = radioGroup.value;
+                        changesMade = true;
+                    }
+                    
+                    // Add notes if provided
+                    if (notesField && notesField.value.trim()) {
+                        if (!item.techCheckNotes) item.techCheckNotes = [];
+                        item.techCheckNotes.push({
+                            date: new Date().toISOString(),
+                            notes: notesField.value.trim()
+                        });
+                        changesMade = true;
+                    }
+                });
+                
+                // Log activity if changes were made
+                if (changesMade) {
+                    const venue = this.venues.find(v => v.id === venueId);
+                    this.logActivity('Tech Check Completed', `Updated equipment status at ${venue.name}`);
+                    this.save();
+                    this.updateUI();
+                }
+                
+                // Show completion step
+                document.getElementById('techCheckStep2').classList.add('hidden');
+                document.getElementById('techCheckCompleteStep').classList.remove('hidden');
+                
+                // Update current tech check
+                this.currentTechCheck.endTime = new Date().toISOString();
+                this.currentTechCheck.changesMade = changesMade;
+            },
+            
+            // Generate tech check report
+            generateTechCheckReport() {
+                if (!this.currentTechCheck) return;
+                
+                const venue = this.venues.find(v => v.id === this.currentTechCheck.venueId);
+                const venueItems = this.items.filter(item => item.venueId === this.currentTechCheck.venueId);
+                
+                const startTime = new Date(this.currentTechCheck.startTime);
+                const endTime = this.currentTechCheck.endTime ? new Date(this.currentTechCheck.endTime) : new Date();
+                
+                let reportHtml = `
+                    <div class="mb-6">
+                        <h4 class="font-bold text-lg mb-2">Tech Check Report</h4>
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Venue</p>
+                                <p class="font-medium">${venue.name}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Date</p>
+                                <p class="font-medium">${endTime.toLocaleDateString()} ${endTime.toLocaleTimeString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h5 class="font-bold mb-3">Equipment Summary</h5>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="text-left p-2">Item ID</th>
+                                        <th class="text-left p-2">Brand/Model</th>
+                                        <th class="text-left p-2">Category</th>
+                                        <th class="text-left p-2">Status</th>
+                                        <th class="text-left p-2">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                venueItems.forEach(item => {
+                    const lastNote = item.techCheckNotes && item.techCheckNotes.length > 0 
+                        ? item.techCheckNotes[item.techCheckNotes.length - 1].notes
+                        : '';
+                    
+                    reportHtml += `
+                        <tr class="border-b">
+                            <td class="p-2 font-medium">${item.id}</td>
+                            <td class="p-2">${item.brand || ''} ${item.model || ''}</td>
+                            <td class="p-2">${item.categories ? item.categories.join(', ') : ''}</td>
+                            <td class="p-2"><span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span></td>
+                            <td class="p-2">${lastNote}</td>
+                        </tr>
+                    `;
+                });
+                
+                reportHtml += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h5 class="font-bold mb-2">Summary</h5>
+                        <p>Total items checked: <span class="font-medium">${venueItems.length}</span></p>
+                        <p>Check duration: <span class="font-medium">${Math.round((endTime - startTime) / 60000)} minutes</span></p>
+                        <p class="mt-2 text-sm">Report generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                    </div>
+                `;
+                
+                document.getElementById('reportContent').innerHTML = reportHtml;
+                this.showModal('reportModal');
+            },
+            
+            // Add new item
+            addItem(itemData) {
+                // Generate ID if not provided
+                if (!itemData.id) {
+                    itemData.id = 'ITEM-' + Date.now().toString().slice(-6);
+                }
+                
+                // Ensure categories is an array
+                if (!Array.isArray(itemData.categories)) {
+                    itemData.categories = itemData.categories ? [itemData.categories] : [];
+                }
+                
+                this.items.push(itemData);
+                this.save();
+                this.updateUI();
+                this.logActivity('Item Added', `Added ${itemData.id} to inventory`);
+            },
+            
+            // Edit existing item
+            editItem(itemId) {
+                const item = this.items.find(i => i.id === itemId);
+                if (!item) return;
+                
+                // Populate form
+                document.getElementById('itemId').value = item.id;
+                document.getElementById('itemUniqueId').value = item.id;
+                document.getElementById('itemBrand').value = item.brand || '';
+                document.getElementById('itemModel').value = item.model || '';
+                document.getElementById('itemStatus').value = item.status || '';
+                document.getElementById('itemVenue').value = item.venueId || '';
+                document.getElementById('itemComment').value = item.comment || '';
+                
+                // Update categories display
+                const selectedCategories = document.getElementById('selectedCategories');
+                selectedCategories.innerHTML = '';
+                
+                if (item.categories && item.categories.length > 0) {
+                    item.categories.forEach(category => {
+                        const span = document.createElement('span');
+                        span.className = 'px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded mr-2 mb-1 inline-flex items-center';
+                        span.innerHTML = `${category} <button type="button" class="ml-1 text-gray-500 remove-category" data-category="${category}"><i class="fas fa-times"></i></button>`;
+                        selectedCategories.appendChild(span);
+                    });
+                }
+                
+                // Update image preview if available
+                const imagePreview = document.getElementById('itemImagePreview');
+                const removeImageBtn = document.getElementById('itemImageRemoveBtn');
+                if (item.image) {
+                    imagePreview.innerHTML = `<img src="${item.image}" alt="Item image" class="w-full h-full object-cover rounded-lg">`;
+                    removeImageBtn.classList.remove('hidden');
+                } else {
+                    imagePreview.innerHTML = '<i class="fas fa-camera text-gray-400 text-4xl"></i>';
+                    removeImageBtn.classList.add('hidden');
+                }
+                
+                // Update modal title
+                document.getElementById('itemModalTitle').textContent = 'Edit Inventory Item';
+                
+                // Show modal
+                this.showModal('itemModal');
+            },
+            
+            // Save item (from form)
+            saveItem(formData) {
+                const itemId = document.getElementById('itemId').value;
+                const isEdit = itemId !== '';
+                
+                // Get selected categories
+                const categoryElements = document.getElementById('selectedCategories').querySelectorAll('span');
+                const categories = Array.from(categoryElements).map(el => {
+                    return el.textContent.replace('×', '').trim();
+                });
+                
+                // Build item object
+                const itemData = {
+                    id: document.getElementById('itemUniqueId').value,
+                    brand: document.getElementById('itemBrand').value,
+                    model: document.getElementById('itemModel').value,
+                    categories: categories,
+                    status: document.getElementById('itemStatus').value,
+                    venueId: document.getElementById('itemVenue').value || null,
+                    comment: document.getElementById('itemComment').value,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                // Handle image if present
+                const imageInput = document.getElementById('itemImage');
+                if (imageInput.files && imageInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        itemData.image = e.target.result;
+                        this.finalizeItemSave(itemData, isEdit);
+                    };
+                    reader.readAsDataURL(imageInput.files[0]);
+                } else {
+                    // Keep existing image if editing
+                    if (isEdit) {
+                        const existingItem = this.items.find(i => i.id === itemId);
+                        if (existingItem && existingItem.image) {
+                            itemData.image = existingItem.image;
+                        }
+                    }
+                    this.finalizeItemSave(itemData, isEdit);
+                }
+            },
+            
+            // Finalize item save
+            finalizeItemSave(itemData, isEdit) {
+                if (isEdit) {
+                    // Update existing item
+                    const index = this.items.findIndex(i => i.id === document.getElementById('itemId').value);
+                    if (index !== -1) {
+                        this.items[index] = itemData;
+                        this.logActivity('Item Updated', `Updated ${itemData.id}`);
+                    }
+                } else {
+                    // Add new item
+                    this.addItem(itemData);
+                }
+                
+                this.save();
+                this.updateUI();
+                this.hideModal('itemModal');
+                
+                // Reset form
+                document.getElementById('itemForm').reset();
+                document.getElementById('selectedCategories').innerHTML = '';
+                document.getElementById('itemImagePreview').innerHTML = '<i class="fas fa-camera text-gray-400 text-4xl"></i>';
+                document.getElementById('itemImageRemoveBtn').classList.add('hidden');
+                document.getElementById('itemImage').value = '';
+            },
+            
+            // Delete item
+            deleteItem(itemId) {
+                if (confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
+                    const item = this.items.find(i => i.id === itemId);
+                    const index = this.items.findIndex(i => i.id === itemId);
+                    
+                    if (index !== -1) {
+                        this.items.splice(index, 1);
+                        this.save();
+                        this.updateUI();
+                        this.logActivity('Item Deleted', `Deleted ${itemId} from inventory`);
+                    }
+                }
+            },
+            
+            // Add new venue
+            addVenue(venueData) {
+                // Generate ID if not provided
+                if (!venueData.id) {
+                    venueData.id = 'VENUE-' + Date.now().toString().slice(-6);
+                }
+                
+                this.venues.push(venueData);
+                this.save();
+                this.updateUI();
+                this.logActivity('Venue Added', `Added ${venueData.name}`);
+            },
+            
+            // Edit existing venue
+            editVenue(venueId) {
+                const venue = this.venues.find(v => v.id === venueId);
+                if (!venue) return;
+                
+                // Populate form
+                document.getElementById('venueId').value = venue.id;
+                document.getElementById('venueName').value = venue.name;
+                document.getElementById('venueAddress').value = venue.address || '';
+                document.getElementById('venueContact').value = venue.contact || '';
+                document.getElementById('venuePhone').value = venue.phone || '';
+                document.getElementById('venueNotes').value = venue.notes || '';
+                
+                // Update modal title
+                document.getElementById('venueModalTitle').textContent = 'Edit Venue';
+                
+                // Show modal
+                this.showModal('venueModal');
+            },
+            
+            // Save venue (from form)
+            saveVenue() {
+                const venueId = document.getElementById('venueId').value;
+                const isEdit = venueId !== '';
+                
+                // Build venue object
+                const venueData = {
+                    id: venueId || 'VENUE-' + Date.now().toString().slice(-6),
+                    name: document.getElementById('venueName').value,
+                    address: document.getElementById('venueAddress').value,
+                    contact: document.getElementById('venueContact').value,
+                    phone: document.getElementById('venuePhone').value,
+                    notes: document.getElementById('venueNotes').value
+                };
+                
+                if (isEdit) {
+                    // Update existing venue
+                    const index = this.venues.findIndex(v => v.id === venueId);
+                    if (index !== -1) {
+                        this.venues[index] = venueData;
+                        this.logActivity('Venue Updated', `Updated ${venueData.name}`);
+                    }
+                } else {
+                    // Add new venue
+                    this.addVenue(venueData);
+                }
+                
+                this.save();
+                this.updateUI();
+                this.hideModal('venueModal');
+                
+                // Reset form
+                document.getElementById('venueForm').reset();
+            },
+            
+            // Delete venue
+            deleteVenue(venueId) {
+                // Check if any items are assigned to this venue
+                const assignedItems = this.items.filter(item => item.venueId === venueId);
+                
+                if (assignedItems.length > 0) {
+                    if (!confirm(`This venue has ${assignedItems.length} item(s) assigned. Deleting it will unassign these items. Continue?`)) {
+                        return;
+                    }
+                    
+                    // Unassign items from this venue
+                    assignedItems.forEach(item => {
+                        item.venueId = null;
+                    });
+                }
+                
+                const venue = this.venues.find(v => v.id === venueId);
+                const index = this.venues.findIndex(v => v.id === venueId);
+                
+                if (index !== -1) {
+                    this.venues.splice(index, 1);
+                    this.save();
+                    this.updateUI();
+                    this.logActivity('Venue Deleted', `Deleted ${venue.name}`);
+                }
+            },
+            
+            // Load journal from JSON
+            loadJournal(jsonData) {
+                try {
+                    const journal = JSON.parse(jsonData);
+                    
+                    // Validate journal structure
+                    if (!journal.company || !journal.company.name) {
+                        throw new Error('Invalid journal format: Missing company information');
+                    }
+                    
+                    // Clear existing data
+                    this.company = journal.company;
+                    this.venues = journal.venues || [];
+                    this.items = journal.items || [];
+                    this.recentActivity = [];
+                    
+                    // Save to localStorage
+                    this.save();
+                    
+                    // Log activity
+                    this.logActivity('Journal Loaded', `Loaded ${journal.company.name} journal`);
+                    
+                    // Update UI
+                    this.updateUI();
+                    
+                    // Show success message
+                    alert(`Successfully loaded ${journal.company.name} journal with ${this.items.length} items and ${this.venues.length} venues.`);
+                    
+                    // Switch to dashboard view
+                    this.showView('dashboard');
+                    
+                } catch (error) {
+                    alert('Error loading journal: ' + error.message);
+                    console.error(error);
+                }
+            },
+            
+            // Export journal as JSON
+            exportJournal() {
+                if (!this.company) {
+                    alert('Please load or create a journal first.');
+                    return;
+                }
+                
+                const journal = {
+                    company: this.company,
+                    venues: this.venues,
+                    items: this.items,
+                    exported: new Date().toISOString()
+                };
+                
+                const jsonString = JSON.stringify(journal, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `venue-track-${this.company.name.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.logActivity('Journal Exported', `Exported ${this.company.name} journal`);
+            },
+            
+            // Create a new journal
+            createNewJournal() {
+                const companyName = prompt('Enter company name for new journal:');
+                if (!companyName) return;
+                
+                this.company = {
+                    name: companyName,
+                    created: new Date().toISOString()
+                };
+                
+                this.venues = [];
+                this.items = [];
+                this.recentActivity = [];
+                
+                this.save();
+                this.updateUI();
+                this.logActivity('New Journal Created', `Created journal for ${companyName}`);
+                
+                // Switch to dashboard view
+                this.showView('dashboard');
+            },
+            
+            // Clear all data
+            clearAllData() {
+                if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                    localStorage.clear();
+                    this.company = null;
+                    this.venues = [];
+                    this.items = [];
+                    this.recentActivity = [];
+                    
+                    // Reset UI
+                    this.updateUI();
+                    
+                    // Show dashboard
+                    this.showView('dashboard');
+                    
+                    // Close menu
+                    this.hideMenu();
+                    
+                    alert('All data has been cleared.');
+                }
+            },
+            
+            // Show a specific view
+            showView(viewName) {
+                // Hide all views
+                document.querySelectorAll('[id$="View"]').forEach(view => {
+                    view.classList.add('hidden');
+                });
+                
+                // Show requested view
+                document.getElementById(viewName + 'View').classList.remove('hidden');
+                
+                // Update bottom navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    if (item.dataset.tab === viewName) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // Update current view
+                this.currentView = viewName;
+                
+                // Close menu if open
+                this.hideMenu();
+            },
+            
+            // Show modal
+            showModal(modalId) {
+                document.getElementById('modalBackdrop').classList.remove('hidden');
+                document.getElementById(modalId).classList.remove('hidden');
+            },
+            
+            // Hide modal
+            hideModal(modalId) {
+                document.getElementById('modalBackdrop').classList.add('hidden');
+                if (modalId) {
+                    document.getElementById(modalId).classList.add('hidden');
+                } else {
+                    // Hide all modals
+                    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+                        if (modal.id !== 'installPrompt') {
+                            modal.classList.add('hidden');
+                        }
+                    });
+                }
+            },
+            
+            // Show side menu
+            showMenu() {
+                document.getElementById('sideMenu').classList.remove('translate-x-full');
+            },
+            
+            // Hide side menu
+            hideMenu() {
+                document.getElementById('sideMenu').classList.add('translate-x-full');
+            }
+        };
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize app state
+            AppState.init();
+            
+            // PWA Install Prompt
+            let deferredPrompt;
+            const installPrompt = document.getElementById('installPrompt');
+            const installConfirm = document.getElementById('installConfirm');
+            const installCancel = document.getElementById('installCancel');
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Show install prompt after a delay
+                setTimeout(() => {
+                    if (!localStorage.getItem('venueTrack_installPromptShown')) {
+                        installPrompt.classList.remove('hidden');
+                        localStorage.setItem('venueTrack_installPromptShown', 'true');
+                    }
+                }, 3000);
+            });
+            
+            installConfirm.addEventListener('click', () => {
+                installPrompt.classList.add('hidden');
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                        }
+                        deferredPrompt = null;
+                    });
+                }
+            });
+            
+            installCancel.addEventListener('click', () => {
+                installPrompt.classList.add('hidden');
+            });
+            
+            // Event Listeners
+            
+            // Load journal buttons
+            document.getElementById('loadJournalHeaderBtn').addEventListener('click', () => {
+                document.getElementById('journalFileInput').click();
+            });
+            
+            document.getElementById('promptLoadJournalBtn').addEventListener('click', () => {
+                document.getElementById('journalFileInput').click();
+            });
+            
+            // Save journal button
+            document.getElementById('saveJournalBtn').addEventListener('click', () => {
+                AppState.exportJournal();
+            });
+            
+            // Journal file input
+            document.getElementById('journalFileInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    AppState.loadJournal(event.target.result);
+                };
+                reader.readAsText(file);
+                
+                // Reset file input
+                e.target.value = '';
+            });
+            
+            // Bottom navigation items
+            document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
+                item.addEventListener('click', () => {
+                    AppState.showView(item.dataset.tab);
+                });
+            });
+            
+            // Bottom menu button
+            document.getElementById('bottomMenuBtn').addEventListener('click', () => {
+                AppState.showMenu();
+            });
+            
+            // Close menu button
+            document.getElementById('closeMenuBtn').addEventListener('click', () => {
+                AppState.hideMenu();
+            });
+            
+            // Menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const tab = e.currentTarget.dataset.tab;
+                    if (tab) {
+                        AppState.showView(tab);
+                    }
+                });
+            });
+            
+            // Menu actions
+            document.getElementById('menuExport').addEventListener('click', () => {
+                AppState.exportJournal();
+                AppState.hideMenu();
+            });
+            
+            document.getElementById('menuImport').addEventListener('click', () => {
+                document.getElementById('journalFileInput').click();
+                AppState.hideMenu();
+            });
+            
+            document.getElementById('menuClearData').addEventListener('click', () => {
+                AppState.clearAllData();
+            });
+            
+            // Quick action buttons
+            document.getElementById('quickAddItem').addEventListener('click', () => {
+                AppState.showView('inventory');
+                // Reset form for new item
+                document.getElementById('itemForm').reset();
+                document.getElementById('selectedCategories').innerHTML = '';
+                document.getElementById('itemImagePreview').innerHTML = '<i class="fas fa-camera text-gray-400 text-4xl"></i>';
+                document.getElementById('itemImageRemoveBtn').classList.add('hidden');
+                document.getElementById('itemImage').value = '';
+                document.getElementById('itemModalTitle').textContent = 'Add Inventory Item';
+                document.getElementById('itemId').value = '';
+                AppState.showModal('itemModal');
+            });
+            
+            document.getElementById('quickTechCheck').addEventListener('click', () => {
+                AppState.showView('techcheck');
+            });
+            
+            document.getElementById('quickAddVenue').addEventListener('click', () => {
+                AppState.showView('venues');
+                // Reset form for new venue
+                document.getElementById('venueForm').reset();
+                document.getElementById('venueModalTitle').textContent = 'Add Venue';
+                document.getElementById('venueId').value = '';
+                AppState.showModal('venueModal');
+            });
+            
+            // Add item button
+            document.getElementById('addItemBtn').addEventListener('click', () => {
+                // Reset form for new item
+                document.getElementById('itemForm').reset();
+                document.getElementById('selectedCategories').innerHTML = '';
+                document.getElementById('itemImagePreview').innerHTML = '<i class="fas fa-camera text-gray-400 text-4xl"></i>';
+                document.getElementById('itemImageRemoveBtn').classList.add('hidden');
+                document.getElementById('itemImage').value = '';
+                document.getElementById('itemModalTitle').textContent = 'Add Inventory Item';
+                document.getElementById('itemId').value = '';
+                AppState.showModal('itemModal');
+            });
+            
+            // Item form
+            document.getElementById('itemForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                AppState.saveItem();
+            });
+            
+            // Submit item button (explicit)
+            document.getElementById('submitItemBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('itemForm').dispatchEvent(new Event('submit'));
+            });
+            
+            // QR Code button
+            document.getElementById('qrCodeBtn').addEventListener('click', () => {
+                const itemId = document.getElementById('itemUniqueId').value;
+                if (itemId.trim()) {
+                    // Show QR code for current item ID
+                    const tempItem = { id: itemId };
+                    AppState.showQRCode = function() {
+                        // Clear previous QR code
+                        const qrContainer = document.getElementById('qrcode');
+                        qrContainer.innerHTML = '';
+                        
+                        // Set item info
+                        document.getElementById('qrItemId').textContent = itemId;
+                        document.getElementById('qrItemDetails').textContent = 'New Item';
+                        
+                        // Generate QR code
+                        const canvas = SimpleQRCode.generate(itemId, 200);
+                        qrContainer.appendChild(canvas);
+                        
+                        // Show modal
+                        AppState.showModal('qrCodeModal');
+                        
+                        // Setup download button
+                        document.getElementById('downloadQrCodeBtn').onclick = () => {
+                            SimpleQRCode.download(canvas, `qr-code-${itemId}.png`);
+                        };
+                        
+                        // Setup print button
+                        document.getElementById('printQrCodeBtn').onclick = () => {
+                            const printWindow = window.open('', '_blank');
+                            printWindow.document.write(`
+                                <html>
+                                    <head>
+                                        <title>QR Code - ${itemId}</title>
+                                        <style>
+                                            body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
+                                            .label { margin: 20px; display: inline-block; }
+                                            .item-id { font-size: 18px; font-weight: bold; margin: 10px 0; }
+                                            @media print {
+                                                body { margin: 0; }
+                                                .no-print { display: none; }
+                                            }
+                                        </style>
+                                    </head>
+                                    <body>
+                                        <button class="no-print" onclick="window.print()" style="padding: 10px 20px; background: #3f51b5; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Print Labels</button>
+                                        <div class="label">
+                                            <canvas id="qrCanvas"></canvas>
+                                            <div class="item-id">${itemId}</div>
+                                        </div>
+                                        <script>
+                                            const canvas = document.getElementById('qrCanvas');
+                                            const ctx = canvas.getContext('2d');
+                                            const img = new Image();
+                                            img.onload = function() {
+                                                canvas.width = 200;
+                                                canvas.height = 200;
+                                                ctx.drawImage(img, 0, 0, 200, 200);
+                                            };
+                                            img.src = '${canvas.toDataURL()}';
+                                        <\/script>
+                                    </body>
+                                </html>
+                            `);
+                            printWindow.document.close();
+                        };
+                    };
+                    AppState.showQRCode();
+                } else {
+                    alert('Please enter an item ID first');
+                }
+            });
+            
+            // Add category button
+            document.getElementById('addCategoryBtn').addEventListener('click', () => {
+                const categorySelect = document.getElementById('itemCategorySelect');
+                const category = categorySelect.value;
+                
+                if (category) {
+                    const selectedCategories = document.getElementById('selectedCategories');
+                    
+                    // Check if category already added
+                    const existing = Array.from(selectedCategories.querySelectorAll('span')).some(span => 
+                        span.textContent.replace('×', '').trim() === category
+                    );
+                    
+                    if (!existing) {
+                        const span = document.createElement('span');
+                        span.className = 'px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded mr-2 mb-1 inline-flex items-center';
+                        span.innerHTML = `${category} <button type="button" class="ml-1 text-gray-500 remove-category"><i class="fas fa-times"></i></button>`;
+                        selectedCategories.appendChild(span);
+                        
+                        // Add event listener to remove button
+                        span.querySelector('.remove-category').addEventListener('click', () => {
+                            span.remove();
+                        });
+                    }
+                    
+                    // Reset select
+                    categorySelect.value = '';
+                }
+            });
+            
+            // Item image button
+            document.getElementById('itemImageBtn').addEventListener('click', () => {
+                document.getElementById('itemImage').click();
+            });
+            
+            // Item image preview
+            document.getElementById('itemImage').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // Check file size (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Image size must be less than 2MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imagePreview = document.getElementById('itemImagePreview');
+                    imagePreview.innerHTML = `<img src="${event.target.result}" alt="Item image" class="w-full h-full object-cover rounded-lg">`;
+                    document.getElementById('itemImageRemoveBtn').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            // Remove image button
+            document.getElementById('itemImageRemoveBtn').addEventListener('click', () => {
+                document.getElementById('itemImagePreview').innerHTML = '<i class="fas fa-camera text-gray-400 text-4xl"></i>';
+                document.getElementById('itemImageRemoveBtn').classList.add('hidden');
+                document.getElementById('itemImage').value = '';
+            });
+            
+            // Close item modal buttons
+            document.getElementById('closeItemModal').addEventListener('click', () => {
+                AppState.hideModal('itemModal');
+            });
+            
+            document.getElementById('cancelItemBtn').addEventListener('click', () => {
+                AppState.hideModal('itemModal');
+            });
+            
+            // Close QR code modal
+            document.getElementById('closeQrCodeModal').addEventListener('click', () => {
+                AppState.hideModal('qrCodeModal');
+            });
+            
+            // Add venue button
+            document.getElementById('addVenueBtn').addEventListener('click', () => {
+                // Reset form for new venue
+                document.getElementById('venueForm').reset();
+                document.getElementById('venueModalTitle').textContent = 'Add Venue';
+                document.getElementById('venueId').value = '';
+                AppState.showModal('venueModal');
+            });
+            
+            // Venue form
+            document.getElementById('venueForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                AppState.saveVenue();
+            });
+            
+            // Submit venue button (explicit)
+            document.getElementById('submitVenueBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('venueForm').dispatchEvent(new Event('submit'));
+            });
+            
+            // Close venue modal buttons
+            document.getElementById('closeVenueModal').addEventListener('click', () => {
+                AppState.hideModal('venueModal');
+            });
+            
+            document.getElementById('cancelVenueBtn').addEventListener('click', () => {
+                AppState.hideModal('venueModal');
+            });
+            
+            // Inventory search and filters
+            document.getElementById('searchInventory').addEventListener('input', (e) => {
+                const searchTerm = e.target.value;
+                const filterStatus = document.getElementById('filterStatus').value;
+                const filterVenue = document.getElementById('filterVenue').value;
+                AppState.updateInventoryList(filterStatus, filterVenue, searchTerm);
+            });
+            
+            document.getElementById('filterStatus').addEventListener('change', (e) => {
+                const filterStatus = e.target.value;
+                const filterVenue = document.getElementById('filterVenue').value;
+                const searchTerm = document.getElementById('searchInventory').value;
+                AppState.updateInventoryList(filterStatus, filterVenue, searchTerm);
+            });
+            
+            document.getElementById('filterVenue').addEventListener('change', (e) => {
+                const filterVenue = e.target.value;
+                const filterStatus = document.getElementById('filterStatus').value;
+                const searchTerm = document.getElementById('searchInventory').value;
+                AppState.updateInventoryList(filterStatus, filterVenue, searchTerm);
+            });
+            
+            // Tech check buttons
+            document.getElementById('techCheckBack').addEventListener('click', () => {
+                document.getElementById('techCheckStep2').classList.add('hidden');
+                document.getElementById('techCheckCompleteStep').classList.add('hidden');
+            });
+            
+            document.getElementById('techCheckComplete').addEventListener('click', () => {
+                AppState.completeTechCheck();
+            });
+            
+            document.getElementById('techCheckNew').addEventListener('click', () => {
+                document.getElementById('techCheckCompleteStep').classList.add('hidden');
+            });
+            
+            document.getElementById('techCheckViewReport').addEventListener('click', () => {
+                AppState.generateTechCheckReport();
+            });
+            
+            // Report modal
+            document.getElementById('closeReportModal').addEventListener('click', () => {
+                AppState.hideModal('reportModal');
+            });
+            
+            document.getElementById('printReportBtn').addEventListener('click', () => {
+                window.print();
+            });
+            
+            // Modal backdrop click
+            document.getElementById('modalBackdrop').addEventListener('click', () => {
+                AppState.hideModal();
+            });
+            
+            // Register service worker for PWA functionality
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    const serviceWorkerCode = `
+                        self.addEventListener('install', event => {
+                            console.log('Service Worker installing.');
+                        });
+                        
+                        self.addEventListener('activate', event => {
+                            console.log('Service Worker activating.');
+                        });
+                        
+                        self.addEventListener('fetch', event => {
+                            event.respondWith(
+                                caches.match(event.request)
+                                .then(response => {
+                                    return response || fetch(event.request);
+                                })
+                            );
+                        });
+                    `;
+                    
+                    const blob = new Blob([serviceWorkerCode], { type: 'application/javascript' });
+                    const swURL = URL.createObjectURL(blob);
+                    
+                    navigator.serviceWorker.register(swURL)
+                        .then(registration => {
+                            console.log('ServiceWorker registered with scope:', registration.scope);
+                        })
+                        .catch(error => {
+                            console.log('ServiceWorker registration failed:', error);
+                        });
+                });
+            }
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + S to save (export)
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    AppState.exportJournal();
+                }
+                
+                // Ctrl/Cmd + O to load journal
+                if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+                    e.preventDefault();
+                    document.getElementById('journalFileInput').click();
+                }
+                
+                // Escape to close modals
+                if (e.key === 'Escape') {
+                    AppState.hideModal();
+                    AppState.hideMenu();
+                }
+            });
+            
+            // Prevent drag-and-drop file open behavior
+            document.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('drop', (e) => {
+                e.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>
