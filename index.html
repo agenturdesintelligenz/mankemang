@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventor PWA</title>
-    <meta name="description" content="PWA for venue inventory management">
+    <title>VenueTrack - Inventory & Tech Check</title>
+    <meta name="description" content="PWA for venue inventory management and tech checks">
     <meta name="theme-color" content="#3f51b5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
@@ -28,7 +28,7 @@
         }
         
         /* Custom scrollbar */
-        /*::-webkit-scrollbar {
+        ::-webkit-scrollbar {
             width: 8px;
         }
         
@@ -44,7 +44,7 @@
         
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
-        }*/
+        }
         
         /* Material Design inspired shadows */
         .shadow-material-1 {
@@ -201,7 +201,7 @@
             border-bottom-right-radius: 1rem;
         }
         
-        /* Audit specific styles */
+        /* Tech Check specific styles */
         .tech-check-item {
             transition: all 0.2s ease;
         }
@@ -219,7 +219,7 @@
             <div class="flex items-center">
                 <i class="fas fa-box text-2xl text-primary mr-3"></i>
                 <div>
-                    <p class="font-medium">Install Inventor</p>
+                    <p class="font-medium">Install VenueTrack</p>
                     <p class="text-sm text-gray-600">Get quick access to your inventory</p>
                 </div>
             </div>
@@ -235,7 +235,7 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <h1 id="companyHeader" class="text-xl font-bold text-gray-900">Inventor</h1>
+                    <h1 id="companyHeader" class="text-xl font-bold text-gray-900">VenueTrack</h1>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -255,8 +255,8 @@
 
     <!-- Main App Container -->
     <main class="container mx-auto px-4 py-6">
-        <!-- Dashboard View -->
-        <div id="dashboardView" class="fade-in">
+        <!-- Dash View -->
+        <div id="dashView" class="fade-in">
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white rounded-xl p-6 shadow-material-1">
                     <div class="flex justify-between items-start">
@@ -321,12 +321,12 @@
                             </div>
                         </button>
                         
-                        <button id="quickAudit" class="w-full flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                        <button id="quickTechCheck" class="w-full flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
                             <div class="bg-green-500 text-white p-3 rounded-full mr-4">
                                 <i class="fas fa-clipboard-check"></i>
                             </div>
                             <div class="text-left">
-                                <p class="font-medium">Start Audit</p>
+                                <p class="font-medium">Start Tech Check</p>
                                 <p class="text-sm text-gray-500">Verify equipment status</p>
                             </div>
                         </button>
@@ -442,33 +442,33 @@
             </div>
         </div>
         
-        <!-- Audit Wizard View -->
-        <div id="auditView" class="hidden fade-in">
+        <!-- Tech Check Wizard View -->
+        <div id="techCheckView" class="hidden fade-in">
             <div class="max-w-4xl mx-auto">
                 <div class="bg-white rounded-xl shadow-material-2 p-6 mb-8">
-                    <h2 class="text-2xl font-bold mb-2">Audit Wizard</h2>
+                    <h2 class="text-2xl font-bold mb-2">Tech Check Wizard</h2>
                     <p class="text-gray-600 mb-6">Step-by-step equipment verification for your venues</p>
                     
-                    <div class="mb-8" id="auditStep1">
+                    <div class="mb-8" id="techCheckStep1">
                         <div class="flex items-center mb-6">
                             <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">1</div>
                             <div class="ml-4">
                                 <h3 class="font-bold">Select Venue</h3>
-                                <p class="text-gray-600 text-sm">Choose a venue to perform audit on</p>
+                                <p class="text-gray-600 text-sm">Choose a venue to perform tech check on</p>
                             </div>
                         </div>
                         
-                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="auditVenues">
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="techCheckVenues">
                             <!-- Venue selection buttons will be added here -->
                             <div class="col-span-full text-center py-8 text-gray-500">
                                 <i class="fas fa-map-marker-alt text-3xl mb-3"></i>
-                                <p>No venues available for audit</p>
+                                <p>No venues available for tech check</p>
                                 <p class="text-sm mt-1">Add venues and assign inventory items first</p>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="mb-8 hidden" id="auditStep2">
+                    <div class="mb-8 hidden" id="techCheckStep2">
                         <div class="flex items-center mb-6">
                             <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">2</div>
                             <div class="ml-4">
@@ -477,8 +477,8 @@
                             </div>
                         </div>
                         
-                        <div id="auditItems" class="space-y-4">
-                            <!-- Audit items will be added here -->
+                        <div id="techCheckItems" class="space-y-4">
+                            <!-- Tech check items will be added here -->
                             <div class="text-center py-8 text-gray-500">
                                 <i class="fas fa-box text-3xl mb-3"></i>
                                 <p>Loading equipment...</p>
@@ -486,27 +486,27 @@
                         </div>
                         
                         <div class="mt-8 flex justify-between">
-                            <button id="auditBack" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
+                            <button id="techCheckBack" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
                                 <i class="fas fa-arrow-left mr-2"></i> Back to Venue Selection
                             </button>
-                            <button id="auditComplete" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
-                                Complete Audit
+                            <button id="techCheckComplete" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                                Complete Tech Check
                             </button>
                         </div>
                     </div>
                     
-                    <div class="hidden" id="auditCompleteStep">
+                    <div class="hidden" id="techCheckCompleteStep">
                         <div class="text-center py-8">
                             <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-check text-3xl text-green-500"></i>
                             </div>
-                            <h3 class="text-2xl font-bold mb-2">Audit Complete!</h3>
+                            <h3 class="text-2xl font-bold mb-2">Tech Check Complete!</h3>
                             <p class="text-gray-600 mb-6">The equipment status has been updated for <span id="completedVenueName" class="font-bold"></span></p>
                             <div class="flex justify-center space-x-4">
-                                <button id="auditNew" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
-                                    Start New Audit
+                                <button id="techCheckNew" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
+                                    Start New Tech Check
                                 </button>
-                                <button id="auditViewReport" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                                <button id="techCheckViewReport" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
                                     View Report
                                 </button>
                             </div>
@@ -515,20 +515,20 @@
                 </div>
                 
                 <div class="text-gray-500 text-sm">
-                    <p><i class="fas fa-lightbulb mr-1"></i> Audits help ensure all equipment is accounted for and in working order before events.</p>
+                    <p><i class="fas fa-lightbulb mr-1"></i> Tech checks help ensure all equipment is accounted for and in working order before events.</p>
                 </div>
             </div>
         </div>
         
         <!-- Bottom Navigation Island -->
         <div class="bottom-nav-island">
-            <button class="nav-item active" data-tab="dashboard">
+            <button class="nav-item active" data-tab="dash">
                 <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
+                <span>Dash</span>
             </button>
-            <button class="nav-item" data-tab="audit">
+            <button class="nav-item" data-tab="techCheck">
                 <i class="fas fa-clipboard-check"></i>
-                <span>Audit</span>
+                <span>Tech Check</span>
             </button>
             <button class="nav-item" data-tab="inventory">
                 <i class="fas fa-cubes"></i>
@@ -560,8 +560,8 @@
                         <p id="menuCompanyName" class="font-medium">None loaded</p>
                     </div>
                     
-                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="dashboard">
-                        <i class="fas fa-tachometer-alt mr-3 text-gray-500"></i> Dashboard
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="dash">
+                        <i class="fas fa-tachometer-alt mr-3 text-gray-500"></i> Dash
                     </button>
                     <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="inventory">
                         <i class="fas fa-cubes mr-3 text-gray-500"></i> Inventory
@@ -569,8 +569,8 @@
                     <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="venues">
                         <i class="fas fa-building mr-3 text-gray-500"></i> Venues
                     </button>
-                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="audit">
-                        <i class="fas fa-clipboard-check mr-3 text-gray-500"></i> Audit
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="techCheck">
+                        <i class="fas fa-clipboard-check mr-3 text-gray-500"></i> Tech Check
                     </button>
                     <hr class="my-4">
                     <button id="menuExport" class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100">
@@ -585,7 +585,7 @@
                 </div>
                 
                 <div class="mt-10 pt-6 border-t">
-                    <p class="text-gray-500 text-xs">Inventor v1.0 • PWA</p>
+                    <p class="text-gray-500 text-xs">VenueTrack v1.0 • PWA</p>
                 </div>
             </div>
         </div>
@@ -797,11 +797,11 @@
             </div>
         </div>
         
-        <!-- Audit Report Modal -->
+        <!-- Tech Check Report Modal -->
         <div id="reportModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto z-50">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold">Audit Report</h3>
+                    <h3 class="text-xl font-bold">Tech Check Report</h3>
                     <button id="closeReportModal" class="p-2 hover:bg-gray-100 rounded-full">
                         <i class="fas fa-times"></i>
                     </button>
@@ -829,17 +829,17 @@
     <script>
         // Generate a simple manifest for PWA
         const manifest = {
-            "name": "Inventor - Inventory Manager",
-            "short_name": "Inventor",
-            "description": "PWA for venue inventory management and audits",
+            "name": "VenueTrack - Inventory Manager",
+            "short_name": "VenueTrack",
+            "description": "PWA for venue inventory management and tech checks",
             "start_url": ".",
             "display": "standalone",
             "background_color": "#ffffff",
             "theme_color": "#3f51b5",
             "icons": [
                 {
-                    "src": "data:image/png;base64,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",
-                    "sizes": "256x256",
+                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzYiIGZpbGw9IiMzRjUxQjUiLz4KPHBhdGggZD0iTTk2IDQ2QzExMS40NjQgNDYgMTI0IDU4LjUzNiAxMjQgNzRWNjRDMTI0IDQ4LjUzNiAxMTEuNDY0IDM2IDk2IDM2QzgwLjUzNiAzNiA2OCA0OC41MzYgNjggNjRWNzRDNjggNTguNTM2IDgwLjUzNiA0NiA5NiA0NloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik03MiAxMjhIMTIwQzEzMi44IDExOC40IDE0NCAxMDcuMiAxNDQgOTZDMTQ0IDY4LjggMTIxLjIgNDggOTIgNDhDNTcuNiA0OCAzMiA3My42IDMyIDEwNEMzMiAxMjEuNiA0OC42IDEzNiA2OCAxMzZINzJWMjBIMTI4VjEzNkgxMzJIMTQ4VjE1MkgxMTJWMTkySDgwVjE1Mkg0NFYxMzZINjBWNzJINzJWMTI4WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==",
+                    "sizes": "192x192",
                     "type": "image/svg+xml"
                 }
             ]
@@ -945,16 +945,16 @@
             company: null,
             venues: [],
             items: [],
-            currentAudit: null,
+            currentTechCheck: null,
             recentActivity: [],
-            currentView: 'dashboard',
+            currentView: 'dash',
             
             // Initialize from localStorage
             init() {
-                const savedCompany = localStorage.getItem('inventor_company');
-                const savedVenues = localStorage.getItem('inventor_venues');
-                const savedItems = localStorage.getItem('inventor_items');
-                const savedActivity = localStorage.getItem('inventor_activity');
+                const savedCompany = localStorage.getItem('venueTrack_company');
+                const savedVenues = localStorage.getItem('venueTrack_venues');
+                const savedItems = localStorage.getItem('venueTrack_items');
+                const savedActivity = localStorage.getItem('venueTrack_activity');
                 
                 if (savedCompany) this.company = JSON.parse(savedCompany);
                 if (savedVenues) this.venues = JSON.parse(savedVenues);
@@ -963,7 +963,7 @@
                 
                 this.updateUI();
                 this.updateHeader();
-                this.updateAuditVenues();
+                this.updateTechCheckVenues();
             },
             
             // Update header based on journal state
@@ -977,7 +977,7 @@
                     saveJournalBtn.classList.remove('hidden');
                     loadJournalHeaderBtn.classList.add('hidden');
                 } else {
-                    companyHeader.textContent = "Inventor";
+                    companyHeader.textContent = "VenueTrack";
                     saveJournalBtn.classList.add('hidden');
                     loadJournalHeaderBtn.classList.remove('hidden');
                 }
@@ -985,10 +985,10 @@
             
             // Save to localStorage
             save() {
-                if (this.company) localStorage.setItem('inventor_company', JSON.stringify(this.company));
-                localStorage.setItem('inventor_venues', JSON.stringify(this.venues));
-                localStorage.setItem('inventor_items', JSON.stringify(this.items));
-                localStorage.setItem('inventor_activity', JSON.stringify(this.recentActivity));
+                if (this.company) localStorage.setItem('venueTrack_company', JSON.stringify(this.company));
+                localStorage.setItem('venueTrack_venues', JSON.stringify(this.venues));
+                localStorage.setItem('venueTrack_items', JSON.stringify(this.items));
+                localStorage.setItem('venueTrack_activity', JSON.stringify(this.recentActivity));
             },
             
             // Toggle load journal prompt visibility
@@ -1038,7 +1038,7 @@
                 this.updateInventoryList();
                 this.updateVenuesList();
                 this.updateActivityLog();
-                this.updateAuditVenues();
+                this.updateTechCheckVenues();
                 
                 // Toggle load journal prompt
                 this.toggleLoadJournalPrompt();
@@ -1068,8 +1068,8 @@
                     itemVenueSelect.appendChild(option);
                 });
                 
-                // Update audit venues
-                this.updateAuditVenues();
+                // Update tech check venues
+                this.updateTechCheckVenues();
             },
             
             // Update inventory list
@@ -1294,7 +1294,7 @@
                                     <span class="font-medium">${assignedItems}</span> item${assignedItems !== 1 ? 's' : ''} assigned
                                 </div>
                                 <button class="venue-tech-check-btn px-3 py-1 bg-primary hover:bg-primary-dark text-white rounded text-sm" data-id="${venue.id}">
-                                    <i class="fas fa-clipboard-check mr-1"></i> Audit
+                                    <i class="fas fa-clipboard-check mr-1"></i> Tech Check
                                 </button>
                             </div>
                         </div>
@@ -1312,9 +1312,9 @@
                     btn.addEventListener('click', () => this.deleteVenue(btn.dataset.id));
                 });
                 
-                // Add event listeners to audit buttons
+                // Add event listeners to tech check buttons
                 document.querySelectorAll('.venue-tech-check-btn').forEach(btn => {
-                    btn.addEventListener('click', () => this.startAudit(btn.dataset.id));
+                    btn.addEventListener('click', () => this.startTechCheck(btn.dataset.id));
                 });
             },
             
@@ -1361,15 +1361,15 @@
                 if (action.includes('Added')) return 'plus';
                 if (action.includes('Updated')) return 'edit';
                 if (action.includes('Deleted')) return 'trash';
-                if (action.includes('Audit')) return 'clipboard-check';
+                if (action.includes('Tech Check')) return 'clipboard-check';
                 if (action.includes('Loaded')) return 'folder-open';
                 if (action.includes('Exported')) return 'file-export';
                 return 'history';
             },
             
-            // Update Audit venues
-            updateAuditVenues() {
-                const auditVenues = document.getElementById('auditVenues');
+            // Update tech check venues
+            updateTechCheckVenues() {
+                const techCheckVenues = document.getElementById('techCheckVenues');
                 
                 // Get venues that have items assigned
                 const venuesWithItems = this.venues.filter(venue => 
@@ -1377,10 +1377,10 @@
                 );
                 
                 if (venuesWithItems.length === 0) {
-                    auditVenues.innerHTML = `
+                    techCheckVenues.innerHTML = `
                         <div class="col-span-full text-center py-8 text-gray-500">
                             <i class="fas fa-map-marker-alt text-3xl mb-3"></i>
-                            <p>No venues available for Audit</p>
+                            <p>No venues available for tech check</p>
                             <p class="text-sm mt-1">Add venues and assign inventory items first</p>
                         </div>
                     `;
@@ -1408,19 +1408,19 @@
                     `;
                 });
                 
-                auditVenues.innerHTML = html;
+                techCheckVenues.innerHTML = html;
                 
-                // Add event listeners to Audit venue buttons
+                // Add event listeners to tech check venue buttons
                 document.querySelectorAll('.tech-check-venue-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.preventDefault();
-                        this.startAudit(btn.dataset.id);
+                        this.startTechCheck(btn.dataset.id);
                     });
                 });
             },
             
-            // Start Audit for a venue
-            startAudit(venueId) {
+            // Start tech check for a venue
+            startTechCheck(venueId) {
                 const venue = this.venues.find(v => v.id === venueId);
                 if (!venue) {
                     alert('Venue not found!');
@@ -1435,26 +1435,26 @@
                     return;
                 }
                 
-                this.currentAudit = {
+                this.currentTechCheck = {
                     venueId: venue.id,
                     venueName: venue.name,
                     items: venueItems,
                     startTime: new Date().toISOString()
                 };
                 
-                // Switch to Audit view
-                this.showView('audit');
+                // Switch to tech check view
+                this.showView('techCheck');
                 
                 // Hide step 1, show step 2
-                document.getElementById('auditStep1').classList.add('hidden');
-                document.getElementById('auditStep2').classList.remove('hidden');
-                document.getElementById('auditCompleteStep').classList.add('hidden');
+                document.getElementById('techCheckStep1').classList.add('hidden');
+                document.getElementById('techCheckStep2').classList.remove('hidden');
+                document.getElementById('techCheckCompleteStep').classList.add('hidden');
                 
                 // Set venue name
                 document.getElementById('completedVenueName').textContent = venue.name;
                 
-                // Generate Audit items
-                const auditItems = document.getElementById('auditItems');
+                // Generate tech check items
+                const techCheckItems = document.getElementById('techCheckItems');
                 let html = '';
                 
                 venueItems.forEach((item, index) => {
@@ -1503,18 +1503,18 @@
                     `;
                 });
                 
-                auditItems.innerHTML = html;
+                techCheckItems.innerHTML = html;
                 
                 // Scroll to top
                 window.scrollTo(0, 0);
             },
             
-            // Complete Audit
-            completeAudit() {
-                if (!this.currentAudit) return;
+            // Complete tech check
+            completeTechCheck() {
+                if (!this.currentTechCheck) return;
                 
-                const venueId = this.currentAudit.venueId;
-                const venueItems = this.currentAudit.items;
+                const venueId = this.currentTechCheck.venueId;
+                const venueItems = this.currentTechCheck.items;
                 let changesMade = false;
                 
                 // Update each item's status based on radio buttons
@@ -1529,8 +1529,8 @@
                     
                     // Add notes if provided
                     if (notesField && notesField.value.trim()) {
-                        if (!item.auditNotes) item.auditNotes = [];
-                        item.auditNotes.push({
+                        if (!item.techCheckNotes) item.techCheckNotes = [];
+                        item.techCheckNotes.push({
                             date: new Date().toISOString(),
                             notes: notesField.value.trim()
                         });
@@ -1541,33 +1541,33 @@
                 // Log activity if changes were made
                 if (changesMade) {
                     const venue = this.venues.find(v => v.id === venueId);
-                    this.logActivity('Audit Completed', `Updated equipment status at ${venue.name}`);
+                    this.logActivity('Tech Check Completed', `Updated equipment status at ${venue.name}`);
                     this.save();
                     this.updateUI();
                 }
                 
                 // Show completion step
-                document.getElementById('auditStep2').classList.add('hidden');
-                document.getElementById('auditCompleteStep').classList.remove('hidden');
+                document.getElementById('techCheckStep2').classList.add('hidden');
+                document.getElementById('techCheckCompleteStep').classList.remove('hidden');
                 
-                // Update current Audit
-                this.currentAudit.endTime = new Date().toISOString();
-                this.currentAudit.changesMade = changesMade;
+                // Update current tech check
+                this.currentTechCheck.endTime = new Date().toISOString();
+                this.currentTechCheck.changesMade = changesMade;
             },
             
-            // Generate Audit report
-            generateAuditReport() {
-                if (!this.currentAudit) return;
+            // Generate tech check report
+            generateTechCheckReport() {
+                if (!this.currentTechCheck) return;
                 
-                const venue = this.venues.find(v => v.id === this.currentAudit.venueId);
-                const venueItems = this.currentAudit.items;
+                const venue = this.venues.find(v => v.id === this.currentTechCheck.venueId);
+                const venueItems = this.currentTechCheck.items;
                 
-                const startTime = new Date(this.currentAudit.startTime);
-                const endTime = this.currentAudit.endTime ? new Date(this.currentAudit.endTime) : new Date();
+                const startTime = new Date(this.currentTechCheck.startTime);
+                const endTime = this.currentTechCheck.endTime ? new Date(this.currentTechCheck.endTime) : new Date();
                 
                 let reportHtml = `
                     <div class="mb-6">
-                        <h4 class="font-bold text-lg mb-2">Audit Report</h4>
+                        <h4 class="font-bold text-lg mb-2">Tech Check Report</h4>
                         <div class="grid md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <p class="text-sm text-gray-600">Venue</p>
@@ -1597,8 +1597,8 @@
                 `;
                 
                 venueItems.forEach(item => {
-                    const lastNote = item.auditNotes && item.auditNotes.length > 0 
-                        ? item.auditNotes[item.auditNotes.length - 1].notes
+                    const lastNote = item.techCheckNotes && item.techCheckNotes.length > 0 
+                        ? item.techCheckNotes[item.techCheckNotes.length - 1].notes
                         : '';
                     
                     reportHtml += `
@@ -1901,8 +1901,8 @@
                     // Show success message
                     alert(`Successfully loaded ${journal.company.name} journal with ${this.items.length} items and ${this.venues.length} venues.`);
                     
-                    // Switch to dashboard view
-                    this.showView('dashboard');
+                    // Switch to dash view
+                    this.showView('dash');
                     
                 } catch (error) {
                     alert('Error loading journal: ' + error.message);
@@ -1957,8 +1957,8 @@
                 this.updateUI();
                 this.logActivity('New Journal Created', `Created journal for ${companyName}`);
                 
-                // Switch to dashboard view
-                this.showView('dashboard');
+                // Switch to dash view
+                this.showView('dash');
             },
             
             // Clear all data
@@ -1973,8 +1973,8 @@
                     // Reset UI
                     this.updateUI();
                     
-                    // Show dashboard
-                    this.showView('dashboard');
+                    // Show dash
+                    this.showView('dash');
                     
                     // Close menu
                     this.hideMenu();
@@ -1990,14 +1990,14 @@
                     view.classList.add('hidden');
                 });
                 
-                // Show requested view - Handle special case for audit
+                // Show requested view - Handle special case for techCheck
                 let viewId = viewName + 'View';
                 
-                // Convert to proper case for audit (audit -> auditView)
-                if (viewName === 'audit') {
-                    viewId = 'auditView';
-                } else if (viewName === 'dashboard') {
-                    viewId = 'dashboardView';
+                // Convert to proper case for techCheck (techCheck -> techCheckView)
+                if (viewName === 'techCheck') {
+                    viewId = 'techCheckView';
+                } else if (viewName === 'dash') {
+                    viewId = 'dashView';
                 } else if (viewName === 'inventory') {
                     viewId = 'inventoryView';
                 } else if (viewName === 'venues') {
@@ -2009,8 +2009,8 @@
                     viewElement.classList.remove('hidden');
                 } else {
                     console.error(`View element with ID "${viewId}" not found`);
-                    // Fallback to dashboard
-                    document.getElementById('dashboardView').classList.remove('hidden');
+                    // Fallback to dash
+                    document.getElementById('dashView').classList.remove('hidden');
                 }
                 
                 // Update bottom navigation
@@ -2078,9 +2078,9 @@
                 
                 // Show install prompt after a delay
                 setTimeout(() => {
-                    if (!localStorage.getItem('inventor_installPromptShown')) {
+                    if (!localStorage.getItem('venueTrack_installPromptShown')) {
                         installPrompt.classList.remove('hidden');
-                        localStorage.setItem('inventor_installPromptShown', 'true');
+                        localStorage.setItem('venueTrack_installPromptShown', 'true');
                     }
                 }, 3000);
             });
@@ -2189,8 +2189,8 @@
                 AppState.showModal('itemModal');
             });
             
-            document.getElementById('quickAudit').addEventListener('click', () => {
-                AppState.showView('audit');
+            document.getElementById('quickTechCheck').addEventListener('click', () => {
+                AppState.showView('techCheck');
             });
             
             document.getElementById('quickAddVenue').addEventListener('click', () => {
@@ -2428,25 +2428,25 @@
                 AppState.updateInventoryList(filterStatus, filterVenue, searchTerm);
             });
             
-            // Report buttons
-            document.getElementById('auditBack').addEventListener('click', () => {
-                document.getElementById('auditStep2').classList.add('hidden');
-                document.getElementById('auditStep1').classList.remove('hidden');
-                document.getElementById('auditCompleteStep').classList.add('hidden');
+            // Tech check buttons
+            document.getElementById('techCheckBack').addEventListener('click', () => {
+                document.getElementById('techCheckStep2').classList.add('hidden');
+                document.getElementById('techCheckStep1').classList.remove('hidden');
+                document.getElementById('techCheckCompleteStep').classList.add('hidden');
             });
             
-            document.getElementById('auditComplete').addEventListener('click', () => {
-                AppState.completeAudit();
+            document.getElementById('techCheckComplete').addEventListener('click', () => {
+                AppState.completeTechCheck();
             });
             
-            document.getElementById('auditNew').addEventListener('click', () => {
-                document.getElementById('auditCompleteStep').classList.add('hidden');
-                document.getElementById('auditStep1').classList.remove('hidden');
-                document.getElementById('auditStep2').classList.add('hidden');
+            document.getElementById('techCheckNew').addEventListener('click', () => {
+                document.getElementById('techCheckCompleteStep').classList.add('hidden');
+                document.getElementById('techCheckStep1').classList.remove('hidden');
+                document.getElementById('techCheckStep2').classList.add('hidden');
             });
             
-            document.getElementById('auditViewReport').addEventListener('click', () => {
-                AppState.generateAuditReport();
+            document.getElementById('techCheckViewReport').addEventListener('click', () => {
+                AppState.generateTechCheckReport();
             });
             
             // Report modal
