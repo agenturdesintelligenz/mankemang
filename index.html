@@ -569,7 +569,7 @@
                     <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="venues">
                         <i class="fas fa-building mr-3 text-gray-500"></i> Venues
                     </button>
-                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="techcheck">
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="techCheck">
                         <i class="fas fa-clipboard-check mr-3 text-gray-500"></i> Tech Check
                     </button>
                     <hr class="my-4">
@@ -1443,7 +1443,7 @@
                 };
                 
                 // Switch to tech check view
-                this.showView('techcheck');
+                this.showView('techCheck');
                 
                 // Hide step 1, show step 2
                 document.getElementById('techCheckStep1').classList.add('hidden');
@@ -1990,8 +1990,28 @@
                     view.classList.add('hidden');
                 });
                 
-                // Show requested view
-                document.getElementById(viewName + 'View').classList.remove('hidden');
+                // Show requested view - Handle special case for techCheck
+                let viewId = viewName + 'View';
+                
+                // Convert to proper case for techCheck (techCheck -> techCheckView)
+                if (viewName === 'techCheck') {
+                    viewId = 'techCheckView';
+                } else if (viewName === 'dashboard') {
+                    viewId = 'dashboardView';
+                } else if (viewName === 'inventory') {
+                    viewId = 'inventoryView';
+                } else if (viewName === 'venues') {
+                    viewId = 'venuesView';
+                }
+                
+                const viewElement = document.getElementById(viewId);
+                if (viewElement) {
+                    viewElement.classList.remove('hidden');
+                } else {
+                    console.error(`View element with ID "${viewId}" not found`);
+                    // Fallback to dashboard
+                    document.getElementById('dashboardView').classList.remove('hidden');
+                }
                 
                 // Update bottom navigation
                 document.querySelectorAll('.nav-item').forEach(item => {
@@ -2170,7 +2190,7 @@
             });
             
             document.getElementById('quickTechCheck').addEventListener('click', () => {
-                AppState.showView('techcheck');
+                AppState.showView('techCheck');
             });
             
             document.getElementById('quickAddVenue').addEventListener('click', () => {
