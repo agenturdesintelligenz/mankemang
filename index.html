@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VenueTrack - Inventory & Tech Check</title>
+    <title>Inventor - Inventory Management</title>
     <meta name="description" content="PWA for venue inventory management and tech checks">
     <meta name="theme-color" content="#3f51b5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -201,7 +201,7 @@
             border-bottom-right-radius: 1rem;
         }
         
-        /* Tech Check specific styles */
+        /* Audit specific styles */
         .tech-check-item {
             transition: all 0.2s ease;
         }
@@ -219,7 +219,7 @@
             <div class="flex items-center">
                 <i class="fas fa-box text-2xl text-primary mr-3"></i>
                 <div>
-                    <p class="font-medium">Install VenueTrack</p>
+                    <p class="font-medium">Install Inventor</p>
                     <p class="text-sm text-gray-600">Get quick access to your inventory</p>
                 </div>
             </div>
@@ -235,7 +235,7 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <h1 id="companyHeader" class="text-xl font-bold text-gray-900">VenueTrack</h1>
+                    <h1 id="companyHeader" class="text-xl font-bold text-gray-900">Inventor</h1>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -321,12 +321,12 @@
                             </div>
                         </button>
                         
-                        <button id="quickTechCheck" class="w-full flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                        <button id="quickAudit" class="w-full flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
                             <div class="bg-green-500 text-white p-3 rounded-full mr-4">
                                 <i class="fas fa-clipboard-check"></i>
                             </div>
                             <div class="text-left">
-                                <p class="font-medium">Start Tech Check</p>
+                                <p class="font-medium">Start Audit</p>
                                 <p class="text-sm text-gray-500">Verify equipment status</p>
                             </div>
                         </button>
@@ -442,14 +442,14 @@
             </div>
         </div>
         
-        <!-- Tech Check Wizard View -->
-        <div id="techCheckView" class="hidden fade-in">
+        <!-- Audit Wizard View -->
+        <div id="auditView" class="hidden fade-in">
             <div class="max-w-4xl mx-auto">
                 <div class="bg-white rounded-xl shadow-material-2 p-6 mb-8">
-                    <h2 class="text-2xl font-bold mb-2">Tech Check Wizard</h2>
+                    <h2 class="text-2xl font-bold mb-2">Audit Wizard</h2>
                     <p class="text-gray-600 mb-6">Step-by-step equipment verification for your venues</p>
                     
-                    <div class="mb-8" id="techCheckStep1">
+                    <div class="mb-8" id="auditStep1">
                         <div class="flex items-center mb-6">
                             <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">1</div>
                             <div class="ml-4">
@@ -458,7 +458,7 @@
                             </div>
                         </div>
                         
-                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="techCheckVenues">
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="auditVenues">
                             <!-- Venue selection buttons will be added here -->
                             <div class="col-span-full text-center py-8 text-gray-500">
                                 <i class="fas fa-map-marker-alt text-3xl mb-3"></i>
@@ -468,7 +468,7 @@
                         </div>
                     </div>
                     
-                    <div class="mb-8 hidden" id="techCheckStep2">
+                    <div class="mb-8 hidden" id="auditStep2">
                         <div class="flex items-center mb-6">
                             <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold">2</div>
                             <div class="ml-4">
@@ -477,7 +477,7 @@
                             </div>
                         </div>
                         
-                        <div id="techCheckItems" class="space-y-4">
+                        <div id="auditItems" class="space-y-4">
                             <!-- Tech check items will be added here -->
                             <div class="text-center py-8 text-gray-500">
                                 <i class="fas fa-box text-3xl mb-3"></i>
@@ -486,27 +486,27 @@
                         </div>
                         
                         <div class="mt-8 flex justify-between">
-                            <button id="techCheckBack" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
+                            <button id="auditBack" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
                                 <i class="fas fa-arrow-left mr-2"></i> Back to Venue Selection
                             </button>
-                            <button id="techCheckComplete" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
-                                Complete Tech Check
+                            <button id="auditComplete" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                                Complete Audit
                             </button>
                         </div>
                     </div>
                     
-                    <div class="hidden" id="techCheckCompleteStep">
+                    <div class="hidden" id="auditCompleteStep">
                         <div class="text-center py-8">
                             <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-check text-3xl text-green-500"></i>
                             </div>
-                            <h3 class="text-2xl font-bold mb-2">Tech Check Complete!</h3>
+                            <h3 class="text-2xl font-bold mb-2">Audit Complete!</h3>
                             <p class="text-gray-600 mb-6">The equipment status has been updated for <span id="completedVenueName" class="font-bold"></span></p>
                             <div class="flex justify-center space-x-4">
-                                <button id="techCheckNew" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
-                                    Start New Tech Check
+                                <button id="auditNew" class="px-6 py-3 border rounded-lg hover:bg-gray-50">
+                                    Start New Audit
                                 </button>
-                                <button id="techCheckViewReport" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                                <button id="auditViewReport" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
                                     View Report
                                 </button>
                             </div>
@@ -526,9 +526,9 @@
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dash</span>
             </button>
-            <button class="nav-item" data-tab="techCheck">
+            <button class="nav-item" data-tab="audit">
                 <i class="fas fa-clipboard-check"></i>
-                <span>Tech Check</span>
+                <span>Audit</span>
             </button>
             <button class="nav-item" data-tab="inventory">
                 <i class="fas fa-cubes"></i>
@@ -569,8 +569,8 @@
                     <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="venues">
                         <i class="fas fa-building mr-3 text-gray-500"></i> Venues
                     </button>
-                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="techCheck">
-                        <i class="fas fa-clipboard-check mr-3 text-gray-500"></i> Tech Check
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="audit">
+                        <i class="fas fa-clipboard-check mr-3 text-gray-500"></i> Audit
                     </button>
                     <hr class="my-4">
                     <button id="menuExport" class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100">
@@ -585,7 +585,7 @@
                 </div>
                 
                 <div class="mt-10 pt-6 border-t">
-                    <p class="text-gray-500 text-xs">VenueTrack v1.0 • PWA</p>
+                    <p class="text-gray-500 text-xs">Inventor v1.0 • PWA</p>
                 </div>
             </div>
         </div>
@@ -797,11 +797,11 @@
             </div>
         </div>
         
-        <!-- Tech Check Report Modal -->
+        <!-- Audit Report Modal -->
         <div id="reportModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto z-50">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold">Tech Check Report</h3>
+                    <h3 class="text-xl font-bold">Audit Report</h3>
                     <button id="closeReportModal" class="p-2 hover:bg-gray-100 rounded-full">
                         <i class="fas fa-times"></i>
                     </button>
@@ -829,8 +829,8 @@
     <script>
         // Generate a simple manifest for PWA
         const manifest = {
-            "name": "VenueTrack - Inventory Manager",
-            "short_name": "VenueTrack",
+            "name": "Inventor - Inventory Manager",
+            "short_name": "Inventor",
             "description": "PWA for venue inventory management and tech checks",
             "start_url": ".",
             "display": "standalone",
@@ -945,16 +945,16 @@
             company: null,
             venues: [],
             items: [],
-            currentTechCheck: null,
+            currentAudit: null,
             recentActivity: [],
             currentView: 'dash',
             
             // Initialize from localStorage
             init() {
-                const savedCompany = localStorage.getItem('venueTrack_company');
-                const savedVenues = localStorage.getItem('venueTrack_venues');
-                const savedItems = localStorage.getItem('venueTrack_items');
-                const savedActivity = localStorage.getItem('venueTrack_activity');
+                const savedCompany = localStorage.getItem('inventor_company');
+                const savedVenues = localStorage.getItem('inventor_venues');
+                const savedItems = localStorage.getItem('inventor_items');
+                const savedActivity = localStorage.getItem('inventor_activity');
                 
                 if (savedCompany) this.company = JSON.parse(savedCompany);
                 if (savedVenues) this.venues = JSON.parse(savedVenues);
@@ -963,7 +963,7 @@
                 
                 this.updateUI();
                 this.updateHeader();
-                this.updateTechCheckVenues();
+                this.updateAuditVenues();
             },
             
             // Update header based on journal state
@@ -977,7 +977,7 @@
                     saveJournalBtn.classList.remove('hidden');
                     loadJournalHeaderBtn.classList.add('hidden');
                 } else {
-                    companyHeader.textContent = "VenueTrack";
+                    companyHeader.textContent = "Inventor";
                     saveJournalBtn.classList.add('hidden');
                     loadJournalHeaderBtn.classList.remove('hidden');
                 }
@@ -985,10 +985,10 @@
             
             // Save to localStorage
             save() {
-                if (this.company) localStorage.setItem('venueTrack_company', JSON.stringify(this.company));
-                localStorage.setItem('venueTrack_venues', JSON.stringify(this.venues));
-                localStorage.setItem('venueTrack_items', JSON.stringify(this.items));
-                localStorage.setItem('venueTrack_activity', JSON.stringify(this.recentActivity));
+                if (this.company) localStorage.setItem('inventor_company', JSON.stringify(this.company));
+                localStorage.setItem('inventor_venues', JSON.stringify(this.venues));
+                localStorage.setItem('inventor_items', JSON.stringify(this.items));
+                localStorage.setItem('inventor_activity', JSON.stringify(this.recentActivity));
             },
             
             // Toggle load journal prompt visibility
@@ -1038,7 +1038,7 @@
                 this.updateInventoryList();
                 this.updateVenuesList();
                 this.updateActivityLog();
-                this.updateTechCheckVenues();
+                this.updateAuditVenues();
                 
                 // Toggle load journal prompt
                 this.toggleLoadJournalPrompt();
@@ -1069,7 +1069,7 @@
                 });
                 
                 // Update tech check venues
-                this.updateTechCheckVenues();
+                this.updateAuditVenues();
             },
             
             // Update inventory list
@@ -1294,7 +1294,7 @@
                                     <span class="font-medium">${assignedItems}</span> item${assignedItems !== 1 ? 's' : ''} assigned
                                 </div>
                                 <button class="venue-tech-check-btn px-3 py-1 bg-primary hover:bg-primary-dark text-white rounded text-sm" data-id="${venue.id}">
-                                    <i class="fas fa-clipboard-check mr-1"></i> Tech Check
+                                    <i class="fas fa-clipboard-check mr-1"></i> Audit
                                 </button>
                             </div>
                         </div>
@@ -1314,7 +1314,7 @@
                 
                 // Add event listeners to tech check buttons
                 document.querySelectorAll('.venue-tech-check-btn').forEach(btn => {
-                    btn.addEventListener('click', () => this.startTechCheck(btn.dataset.id));
+                    btn.addEventListener('click', () => this.startAudit(btn.dataset.id));
                 });
             },
             
@@ -1361,15 +1361,15 @@
                 if (action.includes('Added')) return 'plus';
                 if (action.includes('Updated')) return 'edit';
                 if (action.includes('Deleted')) return 'trash';
-                if (action.includes('Tech Check')) return 'clipboard-check';
+                if (action.includes('Audit')) return 'clipboard-check';
                 if (action.includes('Loaded')) return 'folder-open';
                 if (action.includes('Exported')) return 'file-export';
                 return 'history';
             },
             
             // Update tech check venues
-            updateTechCheckVenues() {
-                const techCheckVenues = document.getElementById('techCheckVenues');
+            updateAuditVenues() {
+                const auditVenues = document.getElementById('auditVenues');
                 
                 // Get venues that have items assigned
                 const venuesWithItems = this.venues.filter(venue => 
@@ -1377,7 +1377,7 @@
                 );
                 
                 if (venuesWithItems.length === 0) {
-                    techCheckVenues.innerHTML = `
+                    auditVenues.innerHTML = `
                         <div class="col-span-full text-center py-8 text-gray-500">
                             <i class="fas fa-map-marker-alt text-3xl mb-3"></i>
                             <p>No venues available for tech check</p>
@@ -1408,19 +1408,19 @@
                     `;
                 });
                 
-                techCheckVenues.innerHTML = html;
+                auditVenues.innerHTML = html;
                 
                 // Add event listeners to tech check venue buttons
                 document.querySelectorAll('.tech-check-venue-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.preventDefault();
-                        this.startTechCheck(btn.dataset.id);
+                        this.startAudit(btn.dataset.id);
                     });
                 });
             },
             
             // Start tech check for a venue
-            startTechCheck(venueId) {
+            startAudit(venueId) {
                 const venue = this.venues.find(v => v.id === venueId);
                 if (!venue) {
                     alert('Venue not found!');
@@ -1435,7 +1435,7 @@
                     return;
                 }
                 
-                this.currentTechCheck = {
+                this.currentAudit = {
                     venueId: venue.id,
                     venueName: venue.name,
                     items: venueItems,
@@ -1443,18 +1443,18 @@
                 };
                 
                 // Switch to tech check view
-                this.showView('techCheck');
+                this.showView('audit');
                 
                 // Hide step 1, show step 2
-                document.getElementById('techCheckStep1').classList.add('hidden');
-                document.getElementById('techCheckStep2').classList.remove('hidden');
-                document.getElementById('techCheckCompleteStep').classList.add('hidden');
+                document.getElementById('auditStep1').classList.add('hidden');
+                document.getElementById('auditStep2').classList.remove('hidden');
+                document.getElementById('auditCompleteStep').classList.add('hidden');
                 
                 // Set venue name
                 document.getElementById('completedVenueName').textContent = venue.name;
                 
                 // Generate tech check items
-                const techCheckItems = document.getElementById('techCheckItems');
+                const auditItems = document.getElementById('auditItems');
                 let html = '';
                 
                 venueItems.forEach((item, index) => {
@@ -1503,18 +1503,18 @@
                     `;
                 });
                 
-                techCheckItems.innerHTML = html;
+                auditItems.innerHTML = html;
                 
                 // Scroll to top
                 window.scrollTo(0, 0);
             },
             
             // Complete tech check
-            completeTechCheck() {
-                if (!this.currentTechCheck) return;
+            completeAudit() {
+                if (!this.currentAudit) return;
                 
-                const venueId = this.currentTechCheck.venueId;
-                const venueItems = this.currentTechCheck.items;
+                const venueId = this.currentAudit.venueId;
+                const venueItems = this.currentAudit.items;
                 let changesMade = false;
                 
                 // Update each item's status based on radio buttons
@@ -1529,8 +1529,8 @@
                     
                     // Add notes if provided
                     if (notesField && notesField.value.trim()) {
-                        if (!item.techCheckNotes) item.techCheckNotes = [];
-                        item.techCheckNotes.push({
+                        if (!item.auditNotes) item.auditNotes = [];
+                        item.auditNotes.push({
                             date: new Date().toISOString(),
                             notes: notesField.value.trim()
                         });
@@ -1541,33 +1541,33 @@
                 // Log activity if changes were made
                 if (changesMade) {
                     const venue = this.venues.find(v => v.id === venueId);
-                    this.logActivity('Tech Check Completed', `Updated equipment status at ${venue.name}`);
+                    this.logActivity('Audit Completed', `Updated equipment status at ${venue.name}`);
                     this.save();
                     this.updateUI();
                 }
                 
                 // Show completion step
-                document.getElementById('techCheckStep2').classList.add('hidden');
-                document.getElementById('techCheckCompleteStep').classList.remove('hidden');
+                document.getElementById('auditStep2').classList.add('hidden');
+                document.getElementById('auditCompleteStep').classList.remove('hidden');
                 
                 // Update current tech check
-                this.currentTechCheck.endTime = new Date().toISOString();
-                this.currentTechCheck.changesMade = changesMade;
+                this.currentAudit.endTime = new Date().toISOString();
+                this.currentAudit.changesMade = changesMade;
             },
             
             // Generate tech check report
-            generateTechCheckReport() {
-                if (!this.currentTechCheck) return;
+            generateAuditReport() {
+                if (!this.currentAudit) return;
                 
-                const venue = this.venues.find(v => v.id === this.currentTechCheck.venueId);
-                const venueItems = this.currentTechCheck.items;
+                const venue = this.venues.find(v => v.id === this.currentAudit.venueId);
+                const venueItems = this.currentAudit.items;
                 
-                const startTime = new Date(this.currentTechCheck.startTime);
-                const endTime = this.currentTechCheck.endTime ? new Date(this.currentTechCheck.endTime) : new Date();
+                const startTime = new Date(this.currentAudit.startTime);
+                const endTime = this.currentAudit.endTime ? new Date(this.currentAudit.endTime) : new Date();
                 
                 let reportHtml = `
                     <div class="mb-6">
-                        <h4 class="font-bold text-lg mb-2">Tech Check Report</h4>
+                        <h4 class="font-bold text-lg mb-2">Audit Report</h4>
                         <div class="grid md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <p class="text-sm text-gray-600">Venue</p>
@@ -1597,8 +1597,8 @@
                 `;
                 
                 venueItems.forEach(item => {
-                    const lastNote = item.techCheckNotes && item.techCheckNotes.length > 0 
-                        ? item.techCheckNotes[item.techCheckNotes.length - 1].notes
+                    const lastNote = item.auditNotes && item.auditNotes.length > 0 
+                        ? item.auditNotes[item.auditNotes.length - 1].notes
                         : '';
                     
                     reportHtml += `
@@ -1990,12 +1990,12 @@
                     view.classList.add('hidden');
                 });
                 
-                // Show requested view - Handle special case for techCheck
+                // Show requested view - Handle special case for audit
                 let viewId = viewName + 'View';
                 
-                // Convert to proper case for techCheck (techCheck -> techCheckView)
-                if (viewName === 'techCheck') {
-                    viewId = 'techCheckView';
+                // Convert to proper case for audit (audit -> auditView)
+                if (viewName === 'audit') {
+                    viewId = 'auditView';
                 } else if (viewName === 'dash') {
                     viewId = 'dashView';
                 } else if (viewName === 'inventory') {
@@ -2078,9 +2078,9 @@
                 
                 // Show install prompt after a delay
                 setTimeout(() => {
-                    if (!localStorage.getItem('venueTrack_installPromptShown')) {
+                    if (!localStorage.getItem('inventor_installPromptShown')) {
                         installPrompt.classList.remove('hidden');
-                        localStorage.setItem('venueTrack_installPromptShown', 'true');
+                        localStorage.setItem('inventor_installPromptShown', 'true');
                     }
                 }, 3000);
             });
@@ -2189,8 +2189,8 @@
                 AppState.showModal('itemModal');
             });
             
-            document.getElementById('quickTechCheck').addEventListener('click', () => {
-                AppState.showView('techCheck');
+            document.getElementById('quickAudit').addEventListener('click', () => {
+                AppState.showView('audit');
             });
             
             document.getElementById('quickAddVenue').addEventListener('click', () => {
@@ -2429,24 +2429,24 @@
             });
             
             // Tech check buttons
-            document.getElementById('techCheckBack').addEventListener('click', () => {
-                document.getElementById('techCheckStep2').classList.add('hidden');
-                document.getElementById('techCheckStep1').classList.remove('hidden');
-                document.getElementById('techCheckCompleteStep').classList.add('hidden');
+            document.getElementById('auditBack').addEventListener('click', () => {
+                document.getElementById('auditStep2').classList.add('hidden');
+                document.getElementById('auditStep1').classList.remove('hidden');
+                document.getElementById('auditCompleteStep').classList.add('hidden');
             });
             
-            document.getElementById('techCheckComplete').addEventListener('click', () => {
-                AppState.completeTechCheck();
+            document.getElementById('auditComplete').addEventListener('click', () => {
+                AppState.completeAudit();
             });
             
-            document.getElementById('techCheckNew').addEventListener('click', () => {
-                document.getElementById('techCheckCompleteStep').classList.add('hidden');
-                document.getElementById('techCheckStep1').classList.remove('hidden');
-                document.getElementById('techCheckStep2').classList.add('hidden');
+            document.getElementById('auditNew').addEventListener('click', () => {
+                document.getElementById('auditCompleteStep').classList.add('hidden');
+                document.getElementById('auditStep1').classList.remove('hidden');
+                document.getElementById('auditStep2').classList.add('hidden');
             });
             
-            document.getElementById('techCheckViewReport').addEventListener('click', () => {
-                AppState.generateTechCheckReport();
+            document.getElementById('auditViewReport').addEventListener('click', () => {
+                AppState.generateAuditReport();
             });
             
             // Report modal
