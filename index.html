@@ -12,25 +12,25 @@
     <style>
         :root {
             /* DeepSeek Theme Colors */
-            --primary-color: #1e88e5;
-            --primary-light: #64b5f6;
-            --primary-dark: #1565c0;
-            --secondary-color: #00acc1;
+            --primary-color: oklch(0.205 0 0);
+            --primary-light: oklch(0.205 0 0);
+            --primary-dark: oklch(0.922 0 0);
+            --secondary-color: oklch(0.97 0 0);
             --success-color: #4caf50;
             --warning-color: #ff9800;
-            --danger-color: #f44336;
+            --danger-color: oklch(0.577 0.245 27.325);
             --deepseek-blue: #1e88e5;
             --deepseek-light-blue: #e3f2fd;
             
             /* Light theme variables */
-            --bg-color: #f8fafc;
-            --text-color: #1e293b;
-            --card-bg: #ffffff;
-            --card-border: #e2e8f0;
-            --sidebar-bg: #ffffff;
-            --input-bg: #ffffff;
-            --input-border: #cbd5e1;
-            --modal-bg: #ffffff;
+            --bg-color: oklch(1 0 0);
+            --text-color: oklch(0.145 0 0);
+            --card-bg: oklch(1 0 0);
+            --card-border: oklch(1 0 0);
+            --sidebar-bg: oklch(0.985 0 0);
+            --input-bg: oklch(0.922 0 0);
+            --input-border: oklch(0.922 0 0);
+            --modal-bg: var(--bg-color);
             --nav-bg: #ffffff;
             --hover-bg: #f1f5f9;
             --shadow-color: rgba(15, 23, 42, 0.08);
@@ -38,13 +38,13 @@
         
         /* Dark theme variables */
         .dark-mode {
-            --bg-color: #0f172a;
-            --text-color: #f1f5f9;
+            --bg-color: oklch(0.145 0 0);
+            --text-color: oklch(0.985 0 0);
             --card-bg: #1e293b;
             --card-border: #334155;
             --sidebar-bg: #1e293b;
-            --input-bg: #334155;
-            --input-border: #475569;
+            --input-bg: oklch(1 0 0 / 15%);
+            --input-border: oklch(1 0 0 / 15%);
             --modal-bg: #1e293b;
             --nav-bg: #1e293b;
             --hover-bg: #334155;
