@@ -5,468 +5,468 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventor - Inventory Management</title>
     <meta name="description" content="PWA for venue inventory management and tech checks">
-    <meta name="theme-color" content="#3f51b5">
+    <meta name="theme-color" content="#1e88e5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="manifest" id="manifest">
     <style>
         :root {
-    --primary-color: #3f51b5;
-    --primary-light: #757de8;
-    --primary-dark: #002984;
-    --secondary-color: #f50057;
-    --success-color: #4caf50;
-    --warning-color: #ff9800;
-    --danger-color: #f44336;
-    
-    /* Light theme variables */
-    --bg-color: #f9fafb;
-    --text-color: #111827;
-    --card-bg: #ffffff;
-    --card-border: #e5e7eb;
-    --sidebar-bg: #ffffff;
-    --input-bg: #ffffff;
-    --input-border: #d1d5db;
-    --modal-bg: #ffffff;
-    --nav-bg: #ffffff;
-    --hover-bg: #f3f4f6;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Dark theme variables - DeepSeek inspired */
-.dark-mode {
-    --bg-color: #1a1a1a;
-    --text-color: #f0f0f0;
-    --card-bg: #2d2d2d;
-    --card-border: #404040;
-    --sidebar-bg: #252525;
-    --input-bg: #363636;
-    --input-border: #4a4a4a;
-    --modal-bg: #2d2d2d;
-    --nav-bg: #252525;
-    --hover-bg: #363636;
-    --shadow-color: rgba(0, 0, 0, 0.4);
-}
-
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Apply theme variables */
-.bg-white {
-    background-color: var(--card-bg) !important;
-}
-
-.bg-gray-50 {
-    background-color: var(--bg-color) !important;
-}
-
-.text-gray-800 {
-    color: var(--text-color) !important;
-}
-
-.border {
-    border-color: var(--card-border) !important;
-}
-
-/* PWA Styles */
-@media (display-mode: standalone) {
-    header {
-        padding-top: env(safe-area-inset-top);
-    }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bg-color);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #777;
-}
-
-/* Material Design inspired shadows */
-.shadow-material-1 {
-    box-shadow: 0 1px 3px var(--shadow-color), 0 1px 2px var(--shadow-color);
-}
-
-.shadow-material-2 {
-    box-shadow: 0 3px 6px var(--shadow-color), 0 3px 6px var(--shadow-color);
-}
-
-.shadow-material-3 {
-    box-shadow: 0 10px 20px var(--shadow-color), 0 6px 6px var(--shadow-color);
-}
-
-.shadow-material-4 {
-    box-shadow: 0 14px 28px var(--shadow-color), 0 10px 10px var(--shadow-color);
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-    animation: fadeIn 0.3s ease-out forwards;
-}
-
-/* Status badges */
-.status-badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-deployed {
-    background-color: rgba(76, 175, 80, 0.1);
-    color: #2e7d32;
-}
-
-.status-reserve {
-    background-color: rgba(33, 150, 243, 0.1);
-    color: #1565c0;
-}
-
-.status-broken {
-    background-color: rgba(244, 67, 54, 0.1);
-    color: #c62828;
-}
-
-.status-service {
-    background-color: rgba(255, 152, 0, 0.1);
-    color: #ef6c00;
-}
-
-/* iPhone 13 Pro specific optimizations */
-@media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
-    .safe-area-top {
-        padding-top: 47px;
-    }
-    
-    .safe-area-bottom {
-        padding-bottom: 34px;
-    }
-}
-
-/* QR Code styling */
-#qrcode canvas {
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-}
-
-/* Bottom Navigation Island */
-.bottom-nav-island {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--nav-bg);
-    border-radius: 24px;
-    box-shadow: 0 10px 40px var(--shadow-color), 0 5px 10px var(--shadow-color);
-    padding: 12px;
-    z-index: 40;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    min-width: 300px;
-    max-width: 400px;
-}
-
-.nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 8px;
-    border-radius: 16px;
-    color: #6b7280;
-    transition: all 0.2s ease;
-    min-width: 60px;
-}
-
-.nav-item.active {
-    background: rgba(63, 81, 181, 0.1);
-    color: #3f51b5;
-}
-
-.nav-item i {
-    font-size: 20px;
-    margin-bottom: 4px;
-}
-
-.nav-item span {
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.nav-item:hover {
-    background: rgba(63, 81, 181, 0.05);
-}
-
-/* Main content padding for bottom nav */
-main {
-    padding-bottom: 100px;
-}
-
-/* Modal with sticky footer */
-.modal-container {
-    display: flex;
-    flex-direction: column;
-    max-height: 85vh;
-}
-
-.modal-header {
-    flex-shrink: 0;
-}
-
-.modal-body {
-    flex: 1;
-    overflow-y: auto;
-}
-
-.modal-footer {
-    flex-shrink: 0;
-    border-top: 1px solid var(--card-border);
-    background: var(--bg-color);
-    margin: -1.5rem;
-    margin-top: 1.5rem;
-    padding: 1.5rem;
-    border-bottom-left-radius: 1rem;
-    border-bottom-right-radius: 1rem;
-}
-
-/* Audit specific styles */
-.tech-check-item {
-    transition: all 0.2s ease;
-}
-
-.tech-check-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--shadow-color);
-}
-
-/* DeepSeek specific adjustments */
-.dark-mode .bg-gray-100 {
-    background-color: #363636 !important;
-}
-
-.dark-mode .bg-gray-50 {
-    background-color: #252525 !important;
-}
-
-.dark-mode .text-gray-600 {
-    color: #b0b0b0 !important;
-}
-
-.dark-mode .text-gray-500 {
-    color: #888888 !important;
-}
-
-.dark-mode .border {
-    border-color: #404040 !important;
-}
-
-.dark-mode .bg-blue-50 {
-    background-color: rgba(59, 130, 246, 0.1) !important;
-    border-color: rgba(59, 130, 246, 0.2) !important;
-}
-
-.dark-mode .bg-green-100 {
-    background-color: rgba(34, 197, 94, 0.1) !important;
-}
-
-.dark-mode .bg-orange-100 {
-    background-color: rgba(249, 115, 22, 0.1) !important;
-}
-
-.dark-mode .bg-purple-100 {
-    background-color: rgba(168, 85, 247, 0.1) !important;
-}
-
-/* Status badges in dark mode */
-.dark-mode .status-deployed {
-    background-color: rgba(34, 197, 94, 0.15);
-    color: #4ade80;
-}
-
-.dark-mode .status-reserve {
-    background-color: rgba(59, 130, 246, 0.15);
-    color: #60a5fa;
-}
-
-.dark-mode .status-broken {
-    background-color: rgba(239, 68, 68, 0.15);
-    color: #f87171;
-}
-
-.dark-mode .status-service {
-    background-color: rgba(249, 115, 22, 0.15);
-    color: #fb923c;
-}
-
-/* Form elements in dark mode */
-.dark-mode input,
-.dark-mode select,
-.dark-mode textarea {
-    background-color: var(--input-bg);
-    color: var(--text-color);
-    border-color: var(--input-border);
-}
-
-.dark-mode input::placeholder {
-    color: #888888;
-}
-
-/* Side menu in dark mode */
-.dark-mode #sideMenu {
-    background-color: var(--sidebar-bg);
-}
-
-/* Bottom nav in dark mode */
-.dark-mode .bottom-nav-island {
-    background-color: var(--nav-bg);
-}
-
-/* Toggle switch */
-.toggle-switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 30px;
-}
-
-.toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.toggle-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
-}
-
-.toggle-slider:before {
-    position: absolute;
-    content: "";
-    height: 22px;
-    width: 22px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked + .toggle-slider {
-    background-color: #3f51b5;
-}
-
-input:checked + .toggle-slider:before {
-    transform: translateX(30px);
-}
-
-/* Settings page styles */
-.settings-section {
-    margin-bottom: 2rem;
-}
-
-.settings-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--card-border);
-}
-
-.settings-item:last-child {
-    border-bottom: none;
-}
-
-.settings-info {
-    flex: 1;
-}
-
-.settings-info h4 {
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-}
-
-.settings-info p {
-    font-size: 0.875rem;
-    color: var(--text-color);
-    opacity: 0.7;
-}
-
-/* Account page styles */
-.account-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.account-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #3f51b5, #757de8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    font-size: 2rem;
-    color: white;
-}
-
-.account-stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.account-stat {
-    background: var(--card-bg);
-    border-radius: 0.75rem;
-    padding: 1rem;
-    text-align: center;
-    border: 1px solid var(--card-border);
-}
-
-.account-stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-.account-stat-label {
-    font-size: 0.875rem;
-    color: var(--text-color);
-    opacity: 0.7;
-}
+            /* DeepSeek Theme Colors */
+            --primary-color: #1e88e5;
+            --primary-light: #64b5f6;
+            --primary-dark: #1565c0;
+            --secondary-color: #00acc1;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --deepseek-blue: #1e88e5;
+            --deepseek-light-blue: #e3f2fd;
+            
+            /* Light theme variables */
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --sidebar-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --modal-bg: #ffffff;
+            --nav-bg: #ffffff;
+            --hover-bg: #f1f5f9;
+            --shadow-color: rgba(15, 23, 42, 0.08);
+        }
+        
+        /* Dark theme variables */
+        .dark-mode {
+            --bg-color: #0f172a;
+            --text-color: #f1f5f9;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --sidebar-bg: #1e293b;
+            --input-bg: #334155;
+            --input-border: #475569;
+            --modal-bg: #1e293b;
+            --nav-bg: #1e293b;
+            --hover-bg: #334155;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Apply theme variables */
+        .bg-white {
+            background-color: var(--card-bg) !important;
+        }
+        
+        .bg-gray-50 {
+            background-color: var(--bg-color) !important;
+        }
+        
+        .text-gray-800 {
+            color: var(--text-color) !important;
+        }
+        
+        .border {
+            border-color: var(--card-border) !important;
+        }
+        
+        /* PWA Styles */
+        @media (display-mode: standalone) {
+            header {
+                padding-top: env(safe-area-inset-top);
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Material Design inspired shadows */
+        .shadow-material-1 {
+            box-shadow: 0 1px 3px var(--shadow-color), 0 1px 2px var(--shadow-color);
+        }
+        
+        .shadow-material-2 {
+            box-shadow: 0 3px 6px var(--shadow-color), 0 3px 6px var(--shadow-color);
+        }
+        
+        .shadow-material-3 {
+            box-shadow: 0 10px 20px var(--shadow-color), 0 6px 6px var(--shadow-color);
+        }
+        
+        .shadow-material-4 {
+            box-shadow: 0 14px 28px var(--shadow-color), 0 10px 10px var(--shadow-color);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        /* Status badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-deployed {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+        }
+        
+        .status-reserve {
+            background-color: rgba(30, 136, 229, 0.1);
+            color: #1565c0;
+        }
+        
+        .status-broken {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #c62828;
+        }
+        
+        .status-service {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #ef6c00;
+        }
+        
+        /* iPhone 13 Pro specific optimizations */
+        @media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
+            .safe-area-top {
+                padding-top: 47px;
+            }
+            
+            .safe-area-bottom {
+                padding-bottom: 34px;
+            }
+        }
+        
+        /* QR Code styling */
+        #qrcode canvas {
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+        }
+        
+        /* Bottom Navigation Island */
+        .bottom-nav-island {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--nav-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px var(--shadow-color), 0 5px 10px var(--shadow-color);
+            padding: 12px;
+            z-index: 40;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            min-width: 300px;
+            max-width: 400px;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 8px;
+            border-radius: 16px;
+            color: #64748b;
+            transition: all 0.2s ease;
+            min-width: 60px;
+        }
+        
+        .nav-item.active {
+            background: rgba(30, 136, 229, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .nav-item:hover {
+            background: rgba(30, 136, 229, 0.05);
+        }
+        
+        /* Main content padding for bottom nav */
+        main {
+            padding-bottom: 100px;
+        }
+        
+        /* Modal with sticky footer */
+        .modal-container {
+            display: flex;
+            flex-direction: column;
+            max-height: 85vh;
+        }
+        
+        .modal-header {
+            flex-shrink: 0;
+        }
+        
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .modal-footer {
+            flex-shrink: 0;
+            border-top: 1px solid var(--card-border);
+            background: var(--bg-color);
+            margin: -1.5rem;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+        
+        /* Audit specific styles */
+        .tech-check-item {
+            transition: all 0.2s ease;
+        }
+        
+        .tech-check-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+        
+        /* Dark mode specific adjustments */
+        .dark-mode .bg-gray-100 {
+            background-color: #334155 !important;
+        }
+        
+        .dark-mode .text-gray-600 {
+            color: #cbd5e1 !important;
+        }
+        
+        .dark-mode .text-gray-500 {
+            color: #94a3b8 !important;
+        }
+        
+        .dark-mode .border {
+            border-color: #475569 !important;
+        }
+        
+        /* Toggle switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+        
+        /* Settings page styles */
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+        
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-info {
+            flex: 1;
+        }
+        
+        .settings-info h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .settings-info p {
+            font-size: 0.875rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        /* Account page styles */
+        .account-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .account-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .account-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .account-stat {
+            background: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--card-border);
+        }
+        
+        .account-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .account-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        /* Form elements in dark mode */
+        .dark-mode input,
+        .dark-mode select,
+        .dark-mode textarea {
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border-color: var(--input-border);
+        }
+        
+        .dark-mode input::placeholder {
+            color: #94a3b8;
+        }
+        
+        /* Side menu in dark mode */
+        .dark-mode #sideMenu {
+            background-color: var(--sidebar-bg);
+        }
+        
+        /* Bottom nav in dark mode */
+        .dark-mode .bottom-nav-island {
+            background-color: var(--nav-bg);
+        }
+        
+        /* DeepSeek specific styles */
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .text-primary {
+            color: var(--primary-color);
+        }
+        
+        .bg-primary {
+            background-color: var(--primary-color);
+        }
+        
+        .bg-primary-light {
+            background-color: var(--primary-light);
+        }
+        
+        .bg-deepseek-light {
+            background-color: var(--deepseek-light-blue);
+        }
+        
+        /* Company edit specific styles */
+        .company-edit-section {
+            margin-bottom: 2rem;
+        }
+        
+        .company-edit-card {
+            background: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid var(--card-border);
+            margin-bottom: 1.5rem;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
@@ -493,6 +493,9 @@ input:checked + .toggle-slider:before {
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
                     <h1 id="companyHeader" class="text-xl font-bold text-gray-900">Inventor</h1>
+                    <div id="darkModeIndicator" class="ml-2 hidden">
+                        <i class="fas fa-moon text-gray-600"></i>
+                    </div>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -514,6 +517,7 @@ input:checked + .toggle-slider:before {
     <main class="container mx-auto px-4 py-6">
         <!-- Dash View -->
         <div id="dashView" class="fade-in">
+            <!-- ... existing dash content ... -->
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white rounded-xl p-6 shadow-material-1">
                     <div class="flex justify-between items-start">
@@ -521,8 +525,8 @@ input:checked + .toggle-slider:before {
                             <p class="text-gray-500 text-sm">Total Items</p>
                             <p id="totalItems" class="text-3xl font-bold mt-2">0</p>
                         </div>
-                        <div class="bg-blue-100 p-3 rounded-full">
-                            <i class="fas fa-cubes text-blue-500 text-xl"></i>
+                        <div class="bg-deepseek-light p-3 rounded-full">
+                            <i class="fas fa-cubes text-primary text-xl"></i>
                         </div>
                     </div>
                 </div>
@@ -612,8 +616,8 @@ input:checked + .toggle-slider:before {
             </div>
             
             <!-- Load Journal Prompt -->
-            <div id="loadJournalPrompt" class="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
-                <i class="fas fa-folder-open text-4xl text-blue-500 mb-4"></i>
+            <div id="loadJournalPrompt" class="mt-8 bg-deepseek-light border border-blue-200 rounded-xl p-6 text-center">
+                <i class="fas fa-folder-open text-4xl text-primary mb-4"></i>
                 <h3 class="text-xl font-bold mb-2">No Journal Loaded</h3>
                 <p class="text-gray-600 mb-4">Load a company journal to start managing your inventory</p>
                 <button id="promptLoadJournalBtn" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
@@ -624,6 +628,7 @@ input:checked + .toggle-slider:before {
         
         <!-- Inventory Management View -->
         <div id="inventoryView" class="hidden fade-in">
+            <!-- ... existing inventory content ... -->
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Inventory Management</h2>
                 <button id="addItemBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
@@ -673,6 +678,7 @@ input:checked + .toggle-slider:before {
         
         <!-- Venues Management View -->
         <div id="venuesView" class="hidden fade-in">
+            <!-- ... existing venues content ... -->
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Venues Management</h2>
                 <button id="addVenueBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
@@ -701,6 +707,7 @@ input:checked + .toggle-slider:before {
         
         <!-- Audit Wizard View -->
         <div id="auditView" class="hidden fade-in">
+            <!-- ... existing audit content ... -->
             <div class="max-w-4xl mx-auto">
                 <div class="bg-white rounded-xl shadow-material-2 p-6 mb-8">
                     <h2 class="text-2xl font-bold mb-2">Audit Wizard</h2>
@@ -777,6 +784,301 @@ input:checked + .toggle-slider:before {
             </div>
         </div>
         
+        <!-- Settings View -->
+        <div id="settingsView" class="hidden fade-in">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Settings</h2>
+                
+                <div class="bg-white rounded-xl shadow-material-1 p-6 mb-6">
+                    <h3 class="font-bold text-lg mb-4">Appearance</h3>
+                    
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <h4>Dark Mode</h4>
+                            <p>Switch between light and dark themes</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <h4>Use System Preference</h4>
+                            <p>Automatically match your system's dark mode setting</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="systemThemeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-material-1 p-6 mb-6">
+                    <h3 class="font-bold text-lg mb-4">Data Management</h3>
+                    
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <h4>Auto-save</h4>
+                            <p>Automatically save changes to local storage</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoSaveToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <h4>Export Data</h4>
+                            <p>Download all inventory data as JSON file</p>
+                        </div>
+                        <button id="exportDataBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                            Export
+                        </button>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <h4>Import Data</h4>
+                            <p>Load inventory data from JSON file</p>
+                        </div>
+                        <button id="importDataBtn" class="px-4 py-2 border rounded-lg hover:bg-gray-50">
+                            Import
+                        </button>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <h4>Clear All Data</h4>
+                            <p>Remove all inventory items, venues, and settings</p>
+                        </div>
+                        <button id="clearDataBtn" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-material-1 p-6 mb-6">
+                    <h3 class="font-bold text-lg mb-4">Notifications</h3>
+                    
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <h4>Audit Reminders</h4>
+                            <p>Get reminders for pending equipment audits</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auditRemindersToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="settings-item">
+                        <div class="settings-info">
+                            <h4>Low Stock Alerts</h4>
+                            <p>Receive alerts when inventory is low</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="stockAlertsToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-material-1 p-6">
+                    <h3 class="font-bold text-lg mb-4">About</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">App Version</span>
+                            <span class="font-medium">1.0.0</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">PWA Version</span>
+                            <span class="font-medium" id="pwaVersion">1.0</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Last Updated</span>
+                            <span class="font-medium" id="lastUpdated">2024-01-15</span>
+                        </div>
+                        
+                        <div class="mt-6 pt-6 border-t">
+                            <button id="aboutInventorBtn" class="w-full px-4 py-3 border rounded-lg hover:bg-gray-50 text-left">
+                                <div class="flex items-center">
+                                    <i class="fas fa-info-circle text-primary mr-3"></i>
+                                    <div>
+                                        <p class="font-medium">About Inventor</p>
+                                        <p class="text-sm text-gray-500">Learn more about this inventory management system</p>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Account View -->
+        <div id="accountView" class="hidden fade-in">
+            <div class="max-w-3xl mx-auto">
+                <div class="account-header">
+                    <div class="account-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold" id="accountUserName">Inventor User</h2>
+                    <p class="text-gray-600" id="accountUserRole">Inventory Manager</p>
+                </div>
+                
+                <!-- Company Journal Management Section -->
+                <div class="company-edit-section">
+                    <div class="company-edit-card">
+                        <h3 class="font-bold text-lg mb-4">Company Journal</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-600 text-sm">Current Company</p>
+                                    <p id="currentCompanyName" class="font-medium text-lg">No journal loaded</p>
+                                </div>
+                                <button id="editCompanyNameBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                                    <i class="fas fa-edit mr-2"></i> Edit Name
+                                </button>
+                            </div>
+                            
+                            <div class="pt-4 border-t">
+                                <div class="flex space-x-2">
+                                    <button id="exportJournalBtn" class="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-file-export mr-2"></i> Export Journal
+                                    </button>
+                                    <button id="loadJournalBtn" class="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50 flex items-center justify-center">
+                                        <i class="fas fa-folder-open mr-2"></i> Load Journal
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Export your current journal or load a new one</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-material-1 p-6 mb-6">
+                    <h3 class="font-bold text-lg mb-4">Profile Information</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Full Name</span>
+                            <span class="font-medium" id="profileName">Not Set</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Email</span>
+                            <span class="font-medium" id="profileEmail">Not Set</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Role</span>
+                            <span class="font-medium" id="profileRole">Inventory Manager</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Member Since</span>
+                            <span class="font-medium" id="memberSince">2024-01-01</span>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button id="editProfileBtn" class="w-full px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                                Edit Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-material-1 p-6 mb-6">
+                    <h3 class="font-bold text-lg mb-4">Storage Usage</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-600">Local Storage</span>
+                                <span class="font-medium" id="storageUsed">0 KB</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="storageBar" class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">Approximately <span id="storageItems">0</span> items stored locally</p>
+                        </div>
+                        
+                        <div class="account-stats">
+                            <div class="account-stat">
+                                <div class="account-stat-value" id="statItems">0</div>
+                                <div class="account-stat-label">Items</div>
+                            </div>
+                            <div class="account-stat">
+                                <div class="account-stat-value" id="statVenues">0</div>
+                                <div class="account-stat-label">Venues</div>
+                            </div>
+                            <div class="account-stat">
+                                <div class="account-stat-value" id="statAudits">0</div>
+                                <div class="account-stat-label">Audits</div>
+                            </div>
+                            <div class="account-stat">
+                                <div class="account-stat-value" id="statActivity">0</div>
+                                <div class="account-stat-label">Activities</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-material-1 p-6">
+                    <h3 class="font-bold text-lg mb-4">Account Actions</h3>
+                    
+                    <div class="space-y-3">
+                        <button id="changePasswordBtn" class="w-full px-4 py-3 border rounded-lg hover:bg-gray-50 text-left">
+                            <div class="flex items-center">
+                                <i class="fas fa-key text-gray-500 mr-3"></i>
+                                <div>
+                                    <p class="font-medium">Change Password</p>
+                                    <p class="text-sm text-gray-500">Update your account password</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button id="backupDataBtn" class="w-full px-4 py-3 border rounded-lg hover:bg-gray-50 text-left">
+                            <div class="flex items-center">
+                                <i class="fas fa-cloud-upload-alt text-gray-500 mr-3"></i>
+                                <div>
+                                    <p class="font-medium">Backup Data</p>
+                                    <p class="text-sm text-gray-500">Create a backup of all your data</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button id="exportAllDataBtn" class="w-full px-4 py-3 border rounded-lg hover:bg-gray-50 text-left">
+                            <div class="flex items-center">
+                                <i class="fas fa-download text-gray-500 mr-3"></i>
+                                <div>
+                                    <p class="font-medium">Export All Data</p>
+                                    <p class="text-sm text-gray-500">Download complete data export</p>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button id="logoutBtn" class="w-full px-4 py-3 border rounded-lg hover:bg-gray-50 text-left text-red-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                <div>
+                                    <p class="font-medium">Log Out</p>
+                                    <p class="text-sm">Sign out of your account</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Bottom Navigation Island -->
         <div class="bottom-nav-island">
             <button class="nav-item active" data-tab="dash">
@@ -797,13 +1099,13 @@ input:checked + .toggle-slider:before {
             </button>
             <button id="bottomMenuBtn" class="nav-item">
                 <i class="fas fa-ellipsis-h"></i>
-                <span>Menu</span>
+                <span>More</span>
             </button>
         </div>
         
         <!-- Side Menu -->
         <div id="sideMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-material-4 transform translate-x-full transition-transform z-50">
-            <div class="p-6">
+            <div class="p-6 h-full flex flex-col">
                 <div class="flex justify-between items-center mb-8">
                     <h3 class="font-bold text-lg">Menu</h3>
                     <button id="closeMenuBtn" class="p-2 hover:bg-gray-100 rounded-full">
@@ -811,7 +1113,7 @@ input:checked + .toggle-slider:before {
                     </button>
                 </div>
                 
-                <div class="space-y-2">
+                <div class="space-y-2 flex-grow">
                     <div class="px-3 py-2 bg-gray-100 rounded-lg mb-4">
                         <p class="text-gray-500 text-sm">Current Company</p>
                         <p id="menuCompanyName" class="font-medium">None loaded</p>
@@ -830,6 +1132,13 @@ input:checked + .toggle-slider:before {
                         <i class="fas fa-clipboard-check mr-3 text-gray-500"></i> Audit
                     </button>
                     <hr class="my-4">
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="settings">
+                        <i class="fas fa-cog mr-3 text-gray-500"></i> Settings
+                    </button>
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="account">
+                        <i class="fas fa-user mr-3 text-gray-500"></i> Account
+                    </button>
+                    <hr class="my-4">
                     <button id="menuExport" class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100">
                         <i class="fas fa-file-export mr-3 text-gray-500"></i> Export Journal
                     </button>
@@ -841,7 +1150,14 @@ input:checked + .toggle-slider:before {
                     </button>
                 </div>
                 
-                <div class="mt-10 pt-6 border-t">
+                <div class="pt-6 border-t">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-gray-500 text-xs">Dark Mode</p>
+                        <label class="toggle-switch small">
+                            <input type="checkbox" id="menuDarkModeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
                     <p class="text-gray-500 text-xs">Inventor v1.0 • PWA</p>
                 </div>
             </div>
@@ -1077,10 +1393,91 @@ input:checked + .toggle-slider:before {
                 </div>
             </div>
         </div>
+        
+        <!-- Profile Edit Modal -->
+        <div id="profileModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-md z-50">
+            <div class="modal-container p-6">
+                <div class="modal-header flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Edit Profile</h3>
+                    <button id="closeProfileModal" class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="profileForm" class="modal-body space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="profileNameInput">Full Name</label>
+                        <input type="text" id="profileNameInput" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="profileEmailInput">Email</label>
+                        <input type="email" id="profileEmailInput" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="profileCompanyInput">Company</label>
+                        <input type="text" id="profileCompanyInput" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="profileRoleInput">Role</label>
+                        <select id="profileRoleInput" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="Inventory Manager">Inventory Manager</option>
+                            <option value="Venue Manager">Venue Manager</option>
+                            <option value="Technician">Technician</option>
+                            <option value="Administrator">Administrator</option>
+                            <option value="Owner">Owner</option>
+                        </select>
+                    </div>
+                </form>
+                
+                <div class="modal-footer">
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" id="cancelProfileBtn" class="px-6 py-2 border rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="submit" id="submitProfileBtn" form="profileForm" class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Edit Company Name Modal -->
+        <div id="companyNameModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-md z-50">
+            <div class="modal-container p-6">
+                <div class="modal-header flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Edit Company Name</h3>
+                    <button id="closeCompanyNameModal" class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="companyNameForm" class="modal-body space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="companyNameInput">Company Name *</label>
+                        <input type="text" id="companyNameInput" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                        <p class="text-xs text-gray-500 mt-1">This will update the name of your current journal</p>
+                    </div>
+                </form>
+                
+                <div class="modal-footer">
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" id="cancelCompanyNameBtn" class="px-6 py-2 border rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="submit" id="submitCompanyNameBtn" form="companyNameForm" class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                            Update Name
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- File Input for Journal Loading (Hidden) -->
     <input type="file" id="journalFileInput" accept=".json" class="hidden">
+    
+    <!-- File Input for Data Import (Hidden) -->
+    <input type="file" id="dataImportInput" accept=".json" class="hidden">
 
     <!-- Service Worker Registration and App Script -->
     <script>
@@ -1092,10 +1489,10 @@ input:checked + .toggle-slider:before {
             "start_url": ".",
             "display": "standalone",
             "background_color": "#ffffff",
-            "theme_color": "#3f51b5",
+            "theme_color": "#1e88e5",
             "icons": [
                 {
-                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzYiIGZpbGw9IiMzRjUxQjUiLz4KPHBhdGggZD0iTTk2IDQ2QzExMS40NjQgNDYgMTI0IDU4LjUzNiAxMjQgNzRWNjRDMTI0IDQ4LjUzNiAxMTEuNDY0IDM2IDk2IDM2QzgwLjUzNiAzNiA2OCA0OC41MzYgNjggNjRWNzRDNjggNTguNTM2IDgwLjUzNiA0NiA5NiA0NloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik03MiAxMjhIMTIwQzEzMi44IDExOC40IDE0NCAxMDcuMiAxNDQgOTZDMTQ0IDY4LjggMTIxLjIgNDggOTIgNDhDNTcuNiA0OCAzMiA3My42IDMyIDEwNEMzMiAxMjEuNiA0OC42IDEzNiA2OCAxMzZINzJWMjBIMTI4VjEzNkgxMzJIMTQ4VjE1MkgxMTJWMTkySDgwVjE1Mkg0NFYxMzZINjBWNzJINzJWMTI4WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==",
+                    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMzYiIGZpbGw9IiMxRTg4RTUiLz4KPHBhdGggZD0iTTk2IDQ2QzExMS40NjQgNDYgMTI0IDU4LjUzNiAxMjQgNzRWNjRDMTI0IDQ4LjUzNiAxMTEuNDY0IDM2IDk2IDM2QzgwLjUzNiAzNiA2OCA0OC41MzYgNjggNjRWNzRDNjggNTguNTM2IDgwLjUzNiA0NiA5NiA0NloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik03MiAxMjhIMTIwQzEzMi44IDExOC40IDE0NCAxMDcuMiAxNDQgOTZDMTQ0IDY4LjggMTIxLjIgNDggOTIgNDhDNTcuNiA0OCAzMiA3My42IDMyIDEwNEMzMiAxMjEuNiA0OC42IDEzNiA2OCAxMzZINzJWMjBIMTI4VjEzNkgxMzJIMTQ4VjE1MkgxMTJWMTkySDgwVjE1Mkg0NFYxMzZINjBWNzJINzJWMTI4WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==",
                     "sizes": "192x192",
                     "type": "image/svg+xml"
                 }
@@ -1197,6 +1594,102 @@ input:checked + .toggle-slider:before {
             }
         }
         
+        // Dark Mode Manager
+        class DarkModeManager {
+            constructor() {
+                this.isDarkMode = false;
+                this.useSystemTheme = true;
+                this.init();
+            }
+            
+            init() {
+                // Load preferences from localStorage
+                const savedDarkMode = localStorage.getItem('inventor_darkMode');
+                const savedSystemTheme = localStorage.getItem('inventor_useSystemTheme');
+                
+                if (savedDarkMode !== null) {
+                    this.isDarkMode = savedDarkMode === 'true';
+                    this.useSystemTheme = false;
+                }
+                
+                if (savedSystemTheme !== null) {
+                    this.useSystemTheme = savedSystemTheme === 'true';
+                }
+                
+                // Apply initial theme
+                this.applyTheme();
+                
+                // Listen for system theme changes
+                this.watchSystemTheme();
+            }
+            
+            applyTheme() {
+                if (this.useSystemTheme) {
+                    // Check system preference
+                    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    this.isDarkMode = systemPrefersDark;
+                }
+                
+                // Apply to body
+                if (this.isDarkMode) {
+                    document.body.classList.add('dark-mode');
+                    document.getElementById('darkModeIndicator')?.classList.remove('hidden');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    document.getElementById('darkModeIndicator')?.classList.add('hidden');
+                }
+                
+                // Update toggle switches
+                this.updateToggleSwitches();
+            }
+            
+            updateToggleSwitches() {
+                const darkModeToggle = document.getElementById('darkModeToggle');
+                const systemThemeToggle = document.getElementById('systemThemeToggle');
+                const menuDarkModeToggle = document.getElementById('menuDarkModeToggle');
+                
+                if (darkModeToggle) darkModeToggle.checked = this.isDarkMode;
+                if (systemThemeToggle) systemThemeToggle.checked = this.useSystemTheme;
+                if (menuDarkModeToggle) menuDarkModeToggle.checked = this.isDarkMode;
+            }
+            
+            watchSystemTheme() {
+                // Watch for system theme changes
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    if (this.useSystemTheme) {
+                        this.isDarkMode = e.matches;
+                        this.applyTheme();
+                    }
+                });
+            }
+            
+            toggleDarkMode() {
+                this.useSystemTheme = false;
+                this.isDarkMode = !this.isDarkMode;
+                this.savePreferences();
+                this.applyTheme();
+            }
+            
+            toggleSystemTheme() {
+                this.useSystemTheme = !this.useSystemTheme;
+                if (this.useSystemTheme) {
+                    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    this.isDarkMode = systemPrefersDark;
+                }
+                this.savePreferences();
+                this.applyTheme();
+            }
+            
+            savePreferences() {
+                localStorage.setItem('inventor_darkMode', this.isDarkMode.toString());
+                localStorage.setItem('inventor_useSystemTheme', this.useSystemTheme.toString());
+            }
+            
+            getCurrentTheme() {
+                return this.isDarkMode ? 'dark' : 'light';
+            }
+        }
+        
         // App State
         const AppState = {
             company: null,
@@ -1205,6 +1698,21 @@ input:checked + .toggle-slider:before {
             currentAudit: null,
             recentActivity: [],
             currentView: 'dash',
+            userProfile: {
+                name: "Inventor User",
+                email: "",
+                company: "",
+                role: "Inventory Manager",
+                memberSince: new Date().toISOString()
+            },
+            settings: {
+                autoSave: true,
+                auditReminders: true,
+                stockAlerts: true,
+                darkMode: false,
+                useSystemTheme: true
+            },
+            darkModeManager: null,
             
             // Initialize from localStorage
             init() {
@@ -1212,15 +1720,23 @@ input:checked + .toggle-slider:before {
                 const savedVenues = localStorage.getItem('inventor_venues');
                 const savedItems = localStorage.getItem('inventor_items');
                 const savedActivity = localStorage.getItem('inventor_activity');
+                const savedProfile = localStorage.getItem('inventor_profile');
+                const savedSettings = localStorage.getItem('inventor_settings');
                 
                 if (savedCompany) this.company = JSON.parse(savedCompany);
                 if (savedVenues) this.venues = JSON.parse(savedVenues);
                 if (savedItems) this.items = JSON.parse(savedItems);
                 if (savedActivity) this.recentActivity = JSON.parse(savedActivity);
+                if (savedProfile) this.userProfile = JSON.parse(savedProfile);
+                if (savedSettings) this.settings = JSON.parse(savedSettings);
+                
+                // Initialize Dark Mode Manager
+                this.darkModeManager = new DarkModeManager();
                 
                 this.updateUI();
                 this.updateHeader();
                 this.updateAuditVenues();
+                this.updateAccountInfo();
             },
             
             // Update header based on journal state
@@ -1246,6 +1762,8 @@ input:checked + .toggle-slider:before {
                 localStorage.setItem('inventor_venues', JSON.stringify(this.venues));
                 localStorage.setItem('inventor_items', JSON.stringify(this.items));
                 localStorage.setItem('inventor_activity', JSON.stringify(this.recentActivity));
+                localStorage.setItem('inventor_profile', JSON.stringify(this.userProfile));
+                localStorage.setItem('inventor_settings', JSON.stringify(this.settings));
             },
             
             // Toggle load journal prompt visibility
@@ -1305,6 +1823,72 @@ input:checked + .toggle-slider:before {
                 
                 // Update header
                 this.updateHeader();
+                
+                // Update account info
+                this.updateAccountInfo();
+            },
+            
+            // Update account information
+            updateAccountInfo() {
+                // Profile info
+                document.getElementById('accountUserName').textContent = this.userProfile.name;
+                document.getElementById('accountUserRole').textContent = this.userProfile.role;
+                document.getElementById('profileName').textContent = this.userProfile.name || 'Not Set';
+                document.getElementById('profileEmail').textContent = this.userProfile.email || 'Not Set';
+                document.getElementById('profileRole').textContent = this.userProfile.role || 'Inventory Manager';
+                
+                // Update current company name in account view
+                const currentCompanyName = document.getElementById('currentCompanyName');
+                if (this.company) {
+                    currentCompanyName.textContent = this.company.name;
+                    currentCompanyName.classList.remove('text-gray-500');
+                    currentCompanyName.classList.add('text-primary');
+                } else {
+                    currentCompanyName.textContent = 'No journal loaded';
+                    currentCompanyName.classList.remove('text-primary');
+                    currentCompanyName.classList.add('text-gray-500');
+                }
+                
+                // Format member since date
+                if (this.userProfile.memberSince) {
+                    const memberDate = new Date(this.userProfile.memberSince);
+                    document.getElementById('memberSince').textContent = memberDate.toLocaleDateString();
+                }
+                
+                // Update stats
+                const auditCount = this.recentActivity.filter(activity => activity.action.includes('Audit')).length;
+                document.getElementById('statItems').textContent = this.items.length;
+                document.getElementById('statVenues').textContent = this.venues.length;
+                document.getElementById('statAudits').textContent = auditCount;
+                document.getElementById('statActivity').textContent = this.recentActivity.length;
+                
+                // Update storage usage
+                this.updateStorageUsage();
+            },
+            
+            // Update storage usage display
+            updateStorageUsage() {
+                // Calculate total storage used
+                const data = {
+                    company: this.company,
+                    venues: this.venues,
+                    items: this.items,
+                    recentActivity: this.recentActivity,
+                    userProfile: this.userProfile,
+                    settings: this.settings
+                };
+                
+                const jsonString = JSON.stringify(data);
+                const bytes = new Blob([jsonString]).size;
+                const kb = (bytes / 1024).toFixed(2);
+                
+                document.getElementById('storageUsed').textContent = `${kb} KB`;
+                document.getElementById('storageItems').textContent = this.items.length;
+                
+                // Update storage bar (assuming 5MB max for demo)
+                const maxStorage = 5 * 1024; // 5MB in KB
+                const percentage = Math.min((kb / maxStorage) * 100, 100);
+                document.getElementById('storageBar').style.width = `${percentage}%`;
             },
             
             // Update venue filter dropdowns
@@ -1478,7 +2062,7 @@ input:checked + .toggle-slider:before {
                                 </style>
                             </head>
                             <body>
-                                <button class="no-print" onclick="window.print()" style="padding: 10px 20px; background: #3f51b5; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Print Labels</button>
+                                <button class="no-print" onclick="window.print()" style="padding: 10px 20px; background: #1e88e5; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Print Labels</button>
                                 <div class="label">
                                     <canvas id="qrCanvas"></canvas>
                                     <div class="item-id">${item.id}</div>
@@ -2187,13 +2771,77 @@ input:checked + .toggle-slider:before {
                 
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `venue-track-${this.company.name.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
+                a.download = `inventor-${this.company.name.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
                 this.logActivity('Journal Exported', `Exported ${this.company.name} journal`);
+            },
+            
+            // Export all data including settings and profile
+            exportAllData() {
+                const allData = {
+                    company: this.company,
+                    venues: this.venues,
+                    items: this.items,
+                    recentActivity: this.recentActivity,
+                    userProfile: this.userProfile,
+                    settings: this.settings,
+                    exported: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const jsonString = JSON.stringify(allData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `inventor-full-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.logActivity('Full Backup Created', 'Exported complete application data');
+                alert('Full backup created successfully!');
+            },
+            
+            // Import all data
+            importAllData(jsonData) {
+                try {
+                    const data = JSON.parse(jsonData);
+                    
+                    // Validate data structure
+                    if (!data.version) {
+                        throw new Error('Invalid backup format');
+                    }
+                    
+                    // Import data
+                    if (data.company) this.company = data.company;
+                    if (data.venues) this.venues = data.venues;
+                    if (data.items) this.items = data.items;
+                    if (data.recentActivity) this.recentActivity = data.recentActivity;
+                    if (data.userProfile) this.userProfile = data.userProfile;
+                    if (data.settings) this.settings = data.settings;
+                    
+                    // Save to localStorage
+                    this.save();
+                    
+                    // Update UI
+                    this.updateUI();
+                    
+                    // Log activity
+                    this.logActivity('Full Backup Restored', 'Imported complete application data');
+                    
+                    alert('Backup restored successfully!');
+                    
+                } catch (error) {
+                    alert('Error importing backup: ' + error.message);
+                    console.error(error);
+                }
             },
             
             // Create a new journal
@@ -2220,12 +2868,26 @@ input:checked + .toggle-slider:before {
             
             // Clear all data
             clearAllData() {
-                if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+                if (confirm('Are you sure you want to clear all data? This will remove all inventory items, venues, and settings. This action cannot be undone.')) {
                     localStorage.clear();
                     this.company = null;
                     this.venues = [];
                     this.items = [];
                     this.recentActivity = [];
+                    this.userProfile = {
+                        name: "Inventor User",
+                        email: "",
+                        company: "",
+                        role: "Inventory Manager",
+                        memberSince: new Date().toISOString()
+                    };
+                    this.settings = {
+                        autoSave: true,
+                        auditReminders: true,
+                        stockAlerts: true,
+                        darkMode: false,
+                        useSystemTheme: true
+                    };
                     
                     // Reset UI
                     this.updateUI();
@@ -2237,7 +2899,89 @@ input:checked + .toggle-slider:before {
                     this.hideMenu();
                     
                     alert('All data has been cleared.');
+                    
+                    // Reload dark mode settings
+                    this.darkModeManager.init();
                 }
+            },
+            
+            // Edit user profile
+            editProfile() {
+                // Populate form with current profile data
+                document.getElementById('profileNameInput').value = this.userProfile.name || '';
+                document.getElementById('profileEmailInput').value = this.userProfile.email || '';
+                document.getElementById('profileRoleInput').value = this.userProfile.role || 'Inventory Manager';
+                
+                // Show modal
+                this.showModal('profileModal');
+            },
+            
+            // Save user profile
+            saveProfile() {
+                // Update profile
+                this.userProfile.name = document.getElementById('profileNameInput').value || 'Inventor User';
+                this.userProfile.email = document.getElementById('profileEmailInput').value;
+                this.userProfile.role = document.getElementById('profileRoleInput').value;
+                
+                // Save to localStorage
+                this.save();
+                
+                // Update UI
+                this.updateUI();
+                
+                // Hide modal
+                this.hideModal('profileModal');
+                
+                // Log activity
+                this.logActivity('Profile Updated', 'Updated user profile information');
+                
+                alert('Profile updated successfully!');
+            },
+            
+            // Edit company name
+            editCompanyName() {
+                if (!this.company) {
+                    alert('No journal loaded. Please load a journal first.');
+                    return;
+                }
+                
+                // Populate form with current company name
+                document.getElementById('companyNameInput').value = this.company.name;
+                
+                // Show modal
+                this.showModal('companyNameModal');
+            },
+            
+            // Save company name
+            saveCompanyName() {
+                if (!this.company) {
+                    alert('No journal loaded. Cannot update company name.');
+                    return;
+                }
+                
+                const newName = document.getElementById('companyNameInput').value.trim();
+                if (!newName) {
+                    alert('Company name cannot be empty.');
+                    return;
+                }
+                
+                const oldName = this.company.name;
+                this.company.name = newName;
+                this.company.lastUpdated = new Date().toISOString();
+                
+                // Save to localStorage
+                this.save();
+                
+                // Update UI
+                this.updateUI();
+                
+                // Hide modal
+                this.hideModal('companyNameModal');
+                
+                // Log activity
+                this.logActivity('Company Name Updated', `Changed from "${oldName}" to "${newName}"`);
+                
+                alert('Company name updated successfully!');
             },
             
             // Show a specific view
@@ -2247,20 +2991,8 @@ input:checked + .toggle-slider:before {
                     view.classList.add('hidden');
                 });
                 
-                // Show requested view - Handle special case for audit
-                let viewId = viewName + 'View';
-                
-                // Convert to proper case for audit (audit -> auditView)
-                if (viewName === 'audit') {
-                    viewId = 'auditView';
-                } else if (viewName === 'dash') {
-                    viewId = 'dashView';
-                } else if (viewName === 'inventory') {
-                    viewId = 'inventoryView';
-                } else if (viewName === 'venues') {
-                    viewId = 'venuesView';
-                }
-                
+                // Show requested view
+                const viewId = viewName + 'View';
                 const viewElement = document.getElementById(viewId);
                 if (viewElement) {
                     viewElement.classList.remove('hidden');
@@ -2370,8 +3102,16 @@ input:checked + .toggle-slider:before {
                 document.getElementById('journalFileInput').click();
             });
             
+            document.getElementById('loadJournalBtn').addEventListener('click', () => {
+                document.getElementById('journalFileInput').click();
+            });
+            
             // Save journal button
             document.getElementById('saveJournalBtn').addEventListener('click', () => {
+                AppState.exportJournal();
+            });
+            
+            document.getElementById('exportJournalBtn').addEventListener('click', () => {
                 AppState.exportJournal();
             });
             
@@ -2529,7 +3269,7 @@ input:checked + .toggle-slider:before {
                                         </style>
                                     </head>
                                     <body>
-                                        <button class="no-print" onclick="window.print()" style="padding: 10px 20px; background: #3f51b5; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Print Labels</button>
+                                        <button class="no-print" onclick="window.print()" style="padding: 10px 20px; background: #1e88e5; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Print Labels</button>
                                         <div class="label">
                                             <canvas id="qrCanvas"></canvas>
                                             <div class="item-id">${itemId}</div>
@@ -2715,6 +3455,134 @@ input:checked + .toggle-slider:before {
                 window.print();
             });
             
+            // Settings page event listeners
+            document.getElementById('darkModeToggle').addEventListener('change', (e) => {
+                AppState.darkModeManager.toggleDarkMode();
+            });
+            
+            document.getElementById('systemThemeToggle').addEventListener('change', (e) => {
+                AppState.darkModeManager.toggleSystemTheme();
+            });
+            
+            document.getElementById('menuDarkModeToggle').addEventListener('change', (e) => {
+                AppState.darkModeManager.toggleDarkMode();
+            });
+            
+            // Settings toggles
+            document.getElementById('autoSaveToggle').addEventListener('change', (e) => {
+                AppState.settings.autoSave = e.target.checked;
+                AppState.save();
+            });
+            
+            document.getElementById('auditRemindersToggle').addEventListener('change', (e) => {
+                AppState.settings.auditReminders = e.target.checked;
+                AppState.save();
+            });
+            
+            document.getElementById('stockAlertsToggle').addEventListener('change', (e) => {
+                AppState.settings.stockAlerts = e.target.checked;
+                AppState.save();
+            });
+            
+            // Data management buttons
+            document.getElementById('exportDataBtn').addEventListener('click', () => {
+                AppState.exportJournal();
+            });
+            
+            document.getElementById('importDataBtn').addEventListener('click', () => {
+                document.getElementById('dataImportInput').click();
+            });
+            
+            document.getElementById('clearDataBtn').addEventListener('click', () => {
+                AppState.clearAllData();
+            });
+            
+            // Data import input
+            document.getElementById('dataImportInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    AppState.importAllData(event.target.result);
+                };
+                reader.readAsText(file);
+                
+                // Reset file input
+                e.target.value = '';
+            });
+            
+            // About button
+            document.getElementById('aboutInventorBtn').addEventListener('click', () => {
+                alert('Inventor v1.0\n\nA Progressive Web App for inventory management and tech checks.\n\nFeatures:\n- Inventory tracking\n- Venue management\n- Equipment audits\n- QR code generation\n- Dark mode\n- Offline support\n\nBuilt with Tailwind CSS and vanilla JavaScript.');
+            });
+            
+            // Account page event listeners
+            document.getElementById('editProfileBtn').addEventListener('click', () => {
+                AppState.editProfile();
+            });
+            
+            document.getElementById('editCompanyNameBtn').addEventListener('click', () => {
+                AppState.editCompanyName();
+            });
+            
+            document.getElementById('changePasswordBtn').addEventListener('click', () => {
+                alert('Password change functionality would be implemented in a full application with backend authentication.');
+            });
+            
+            document.getElementById('backupDataBtn').addEventListener('click', () => {
+                AppState.exportAllData();
+            });
+            
+            document.getElementById('exportAllDataBtn').addEventListener('click', () => {
+                AppState.exportAllData();
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to log out?')) {
+                    alert('Logout functionality would be implemented in a full application with backend authentication.\n\nFor now, this would clear your session data.');
+                    // In a real app, this would clear session tokens, etc.
+                }
+            });
+            
+            // Profile modal
+            document.getElementById('closeProfileModal').addEventListener('click', () => {
+                AppState.hideModal('profileModal');
+            });
+            
+            document.getElementById('cancelProfileBtn').addEventListener('click', () => {
+                AppState.hideModal('profileModal');
+            });
+            
+            document.getElementById('profileForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                AppState.saveProfile();
+            });
+            
+            document.getElementById('submitProfileBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('profileForm').dispatchEvent(new Event('submit'));
+            });
+            
+            // Company name modal
+            document.getElementById('closeCompanyNameModal').addEventListener('click', () => {
+                AppState.hideModal('companyNameModal');
+            });
+            
+            document.getElementById('cancelCompanyNameBtn').addEventListener('click', () => {
+                AppState.hideModal('companyNameModal');
+            });
+            
+            document.getElementById('companyNameForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                AppState.saveCompanyName();
+            });
+            
+            document.getElementById('submitCompanyNameBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('companyNameForm').dispatchEvent(new Event('submit'));
+            });
+            
             // Modal backdrop click
             document.getElementById('modalBackdrop').addEventListener('click', () => {
                 AppState.hideModal();
@@ -2773,6 +3641,12 @@ input:checked + .toggle-slider:before {
                 if (e.key === 'Escape') {
                     AppState.hideModal();
                     AppState.hideMenu();
+                }
+                
+                // Ctrl/Cmd + D to toggle dark mode
+                if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                    e.preventDefault();
+                    AppState.darkModeManager.toggleDarkMode();
                 }
             });
             
