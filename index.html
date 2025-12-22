@@ -467,6 +467,171 @@
             border: 1px solid var(--card-border);
             margin-bottom: 1.5rem;
         }
+        
+        /* Status toggle button group */
+        .status-toggle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .status-toggle-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--card-border);
+            border-radius: 8px;
+            background: var(--card-bg);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status-toggle-btn:hover {
+            background: var(--hover-bg);
+        }
+        
+        .status-toggle-btn.active {
+            border-color: var(--primary-color);
+            background: rgba(30, 136, 229, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .status-toggle-btn[data-status="DEPLOYED"].active {
+            border-color: #2e7d32;
+            background: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+        }
+        
+        .status-toggle-btn[data-status="RESERVE"].active {
+            border-color: #1565c0;
+            background: rgba(30, 136, 229, 0.1);
+            color: #1565c0;
+        }
+        
+        .status-toggle-btn[data-status="BROKEN"].active {
+            border-color: #c62828;
+            background: rgba(244, 67, 54, 0.1);
+            color: #c62828;
+        }
+        
+        .status-toggle-btn[data-status="SERVICE"].active {
+            border-color: #ef6c00;
+            background: rgba(255, 152, 0, 0.1);
+            color: #ef6c00;
+        }
+        
+        /* Inventory table view */
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .inventory-table th {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 2px solid var(--card-border);
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        
+        .inventory-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--card-border);
+            vertical-align: middle;
+        }
+        
+        .inventory-table tr:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        /* View toggle buttons */
+        .view-toggle-group {
+            display: flex;
+            gap: 8px;
+            margin-left: 12px;
+        }
+        
+        .view-toggle-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .view-toggle-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Compact audit report table */
+        .compact-table {
+            font-size: 12px;
+        }
+        
+        .compact-table th,
+        .compact-table td {
+            padding: 6px 4px;
+            font-size: 12px;
+        }
+        
+        .item-combined {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .item-id {
+            font-weight: 600;
+        }
+        
+        .item-details {
+            font-size: 11px;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        /* Category management */
+        .category-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            background: var(--card-border);
+            border-radius: 12px;
+            margin: 2px;
+            font-size: 12px;
+        }
+        
+        .category-tag .remove-category {
+            margin-left: 4px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        
+        .category-tag .remove-category:hover {
+            opacity: 1;
+        }
+        
+        /* Audit notes textarea */
+        .audit-notes-container {
+            margin: 16px 0;
+        }
+        
+        /* Brand dropdown with add option */
+        .brand-select-container {
+            position: relative;
+        }
+        
+        .add-brand-btn {
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
@@ -492,7 +657,7 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <h1 id="companyHeader" class="text-xl font-bold text-gray-900">Inventor</h1>
+                    <h1 id="companyHeader" class="text-xl font-bold text-gray-900 dark:text-gray-100">Inventor</h1>
                     <div id="darkModeIndicator" class="ml-2 hidden">
                         <i class="fas fa-moon text-gray-600"></i>
                     </div>
@@ -619,18 +784,32 @@
             <div id="loadJournalPrompt" class="mt-8 bg-deepseek-light border border-blue-200 rounded-xl p-6 text-center">
                 <i class="fas fa-folder-open text-4xl text-primary mb-4"></i>
                 <h3 class="text-xl font-bold mb-2">No Journal Loaded</h3>
-                <p class="text-gray-600 mb-4">Load a company journal to start managing your inventory</p>
-                <button id="promptLoadJournalBtn" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
-                    <i class="fas fa-folder-open mr-2"></i> Load Journal
-                </button>
+                <p class="text-gray-600 mb-4">Create a new journal or load an existing one to start managing your inventory</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button id="promptLoadJournalBtn" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                        <i class="fas fa-folder-open mr-2"></i> Load Journal
+                    </button>
+                    <button id="createNewJournalBtn" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg">
+                        <i class="fas fa-plus mr-2"></i> Create New Journal
+                    </button>
+                </div>
             </div>
         </div>
         
         <!-- Inventory Management View -->
         <div id="inventoryView" class="hidden fade-in">
-            <!-- ... existing inventory content ... -->
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Inventory Management</h2>
+                <div class="flex items-center">
+                    <h2 class="text-2xl font-bold">Inventory Management</h2>
+                    <div class="view-toggle-group">
+                        <button id="viewCardsBtn" class="view-toggle-btn active">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button id="viewTableBtn" class="view-toggle-btn">
+                            <i class="fas fa-table"></i>
+                        </button>
+                    </div>
+                </div>
                 <button id="addItemBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
                     <i class="fas fa-plus mr-2"></i> Add Item
                 </button>
@@ -662,12 +841,36 @@
                     </div>
                 </div>
                 
-                <div id="inventoryList" class="p-4">
+                <!-- Card View -->
+                <div id="inventoryCards" class="p-4">
                     <div class="text-center py-12 text-gray-500">
                         <i class="fas fa-box-open text-4xl mb-4"></i>
                         <p class="text-lg">No inventory items found</p>
                         <p class="mt-2">Add your first item or load a Journal file</p>
                     </div>
+                </div>
+                
+                <!-- Table View -->
+                <div id="inventoryTable" class="hidden p-4 overflow-x-auto">
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Brand/Model</th>
+                                <th>Categories</th>
+                                <th>Status</th>
+                                <th>Venue</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-8 text-gray-500">
+                                    No inventory items found
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             
@@ -678,7 +881,6 @@
         
         <!-- Venues Management View -->
         <div id="venuesView" class="hidden fade-in">
-            <!-- ... existing venues content ... -->
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Venues Management</h2>
                 <button id="addVenueBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
@@ -707,7 +909,6 @@
         
         <!-- Audit Wizard View -->
         <div id="auditView" class="hidden fade-in">
-            <!-- ... existing audit content ... -->
             <div class="max-w-4xl mx-auto">
                 <div class="bg-white rounded-xl shadow-material-2 p-6 mb-8">
                     <h2 class="text-2xl font-bold mb-2">Audit Wizard</h2>
@@ -739,6 +940,22 @@
                                 <h3 class="font-bold">Verify Equipment</h3>
                                 <p class="text-gray-600 text-sm">Check each item at the selected venue</p>
                             </div>
+                        </div>
+                        
+                        <!-- General Audit Notes -->
+                        <div class="audit-notes-container mb-6">
+                            <label class="block text-sm font-medium mb-2">General Audit Notes:</label>
+                            <textarea id="auditGeneralNotes" rows="3" class="w-full px-3 py-2 border rounded-lg" placeholder="General notes about this audit..."></textarea>
+                        </div>
+                        
+                        <!-- Add/Remove Item Buttons -->
+                        <div class="flex space-x-4 mb-6">
+                            <button id="addItemToAuditBtn" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg flex items-center">
+                                <i class="fas fa-plus mr-2"></i> Add Item
+                            </button>
+                            <button id="removeItemFromAuditBtn" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center">
+                                <i class="fas fa-minus mr-2"></i> Remove Item
+                            </button>
                         </div>
                         
                         <div id="auditItems" class="space-y-4">
@@ -783,11 +1000,49 @@
                 </div>
             </div>
         </div>
+
+        <!-- Audit Reports View -->
+        <div id="auditReportsView" class="hidden fade-in">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Audit Reports</h2>
+                
+                <div id="auditReportsList" class="space-y-6">
+                    <!-- Audit reports will be listed here -->
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fas fa-file-alt text-4xl mb-4"></i>
+                        <p class="text-lg">No audit reports available</p>
+                        <p class="mt-2">Complete an audit to generate a report</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- Settings View -->
         <div id="settingsView" class="hidden fade-in">
             <div class="max-w-3xl mx-auto">
                 <h2 class="text-2xl font-bold mb-6">Settings</h2>
+                
+                <!-- Category Management -->
+                <div class="bg-white rounded-xl shadow-material-1 p-6 mb-6">
+                    <h3 class="font-bold text-lg mb-4">Category Management</h3>
+                    
+                    <div class="mb-4">
+                        <div class="flex space-x-2 mb-3">
+                            <input type="text" id="newCategoryInput" placeholder="New category name" class="flex-grow px-4 py-2 border rounded-lg">
+                            <button id="addNewCategoryBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                                Add
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-500">Add a new category for inventory items</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium mb-2">Existing Categories:</h4>
+                        <div id="categoriesList" class="flex flex-wrap gap-2">
+                            <!-- Categories will be loaded here -->
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="bg-white rounded-xl shadow-material-1 p-6 mb-6">
                     <h3 class="font-bold text-lg mb-4">Appearance</h3>
@@ -892,12 +1147,12 @@
                     <div class="space-y-4">
                         <div class="flex justify-between">
                             <span class="text-gray-600">App Version</span>
-                            <span class="font-medium">1.0.0</span>
+                            <span class="font-medium">1.1.0</span>
                         </div>
                         
                         <div class="flex justify-between">
                             <span class="text-gray-600">PWA Version</span>
-                            <span class="font-medium" id="pwaVersion">1.0</span>
+                            <span class="font-medium" id="pwaVersion">1.1</span>
                         </div>
                         
                         <div class="flex justify-between">
@@ -1131,6 +1386,9 @@
                     <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="audit">
                         <i class="fas fa-clipboard-check mr-3 text-gray-500"></i> Audit
                     </button>
+                    <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="auditReports">
+                        <i class="fas fa-file-alt mr-3 text-gray-500"></i> Audit Reports
+                    </button>
                     <hr class="my-4">
                     <button class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100" data-tab="settings">
                         <i class="fas fa-cog mr-3 text-gray-500"></i> Settings
@@ -1145,6 +1403,9 @@
                     <button id="menuImport" class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100">
                         <i class="fas fa-file-import mr-3 text-gray-500"></i> Load Journal
                     </button>
+                    <button id="menuCreateJournal" class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-plus mr-3 text-gray-500"></i> Create Journal
+                    </button>
                     <button id="menuClearData" class="menu-item w-full text-left p-3 rounded-lg hover:bg-gray-100 text-red-500">
                         <i class="fas fa-trash-alt mr-3"></i> Clear All Data
                     </button>
@@ -1158,7 +1419,7 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
-                    <p class="text-gray-500 text-xs">Inventor v1.0 • PWA</p>
+                    <p class="text-gray-500 text-xs">Inventor v1.1 • PWA</p>
                 </div>
             </div>
         </div>
@@ -1214,7 +1475,10 @@
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium mb-1" for="itemBrand">Brand</label>
-                            <input type="text" id="itemBrand" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            <input type="text" id="itemBrand" list="brandList" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            <datalist id="brandList">
+                                <!-- Brands will be populated dynamically -->
+                            </datalist>
                         </div>
                         
                         <div>
@@ -1231,15 +1495,6 @@
                         <div class="flex">
                             <select id="itemCategorySelect" class="flex-grow px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary">
                                 <option value="">Select a category</option>
-                                <option value="Moving Head">Moving Head</option>
-                                <option value="Turntable">Turntable</option>
-                                <option value="Cable">Cable</option>
-                                <option value="PSU">PSU</option>
-                                <option value="Controller">Controller</option>
-                                <option value="Lighting">Lighting</option>
-                                <option value="Audio">Audio</option>
-                                <option value="Video">Video</option>
-                                <option value="Other">Other</option>
                             </select>
                             <button type="button" id="addCategoryBtn" class="px-4 py-2 bg-gray-100 border border-l-0 rounded-r-lg hover:bg-gray-200">Add</button>
                         </div>
@@ -1247,14 +1502,14 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium mb-1" for="itemStatus">Status *</label>
-                        <select id="itemStatus" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
-                            <option value="">Select status</option>
-                            <option value="DEPLOYED">Deployed</option>
-                            <option value="RESERVE">Reserve</option>
-                            <option value="BROKEN">Broken</option>
-                            <option value="SERVICE">Service</option>
-                        </select>
+                        <label class="block text-sm font-medium mb-1">Status *</label>
+                        <div class="status-toggle-group">
+                            <button type="button" class="status-toggle-btn" data-status="DEPLOYED">Deployed</button>
+                            <button type="button" class="status-toggle-btn" data-status="RESERVE">Reserve</button>
+                            <button type="button" class="status-toggle-btn" data-status="BROKEN">Broken</button>
+                            <button type="button" class="status-toggle-btn" data-status="SERVICE">Service</button>
+                        </div>
+                        <input type="hidden" id="itemStatus" required>
                     </div>
                     
                     <div>
@@ -1337,23 +1592,6 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium mb-1" for="venueAddress">Address</label>
-                        <input type="text" id="venueAddress" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
-                    </div>
-                    
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1" for="venueContact">Contact Person</label>
-                            <input type="text" id="venueContact" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium mb-1" for="venuePhone">Phone</label>
-                            <input type="text" id="venuePhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
-                        </div>
-                    </div>
-                    
-                    <div>
                         <label class="block text-sm font-medium mb-1" for="venueNotes">Notes</label>
                         <textarea id="venueNotes" rows="3" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Additional information about this venue..."></textarea>
                     </div>
@@ -1388,6 +1626,95 @@
                     <div class="flex justify-end">
                         <button id="printReportBtn" class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg flex items-center">
                             <i class="fas fa-print mr-2"></i> Print Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Item to Audit Modal -->
+        <div id="addAuditItemModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-md z-50">
+            <div class="modal-container p-6">
+                <div class="modal-header flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Add Item to Audit</h3>
+                    <button id="closeAddAuditItemModal" class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Select Item</label>
+                        <select id="auditItemSelect" class="w-full px-4 py-2 border rounded-lg">
+                            <option value="">Select an item</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Status</label>
+                        <div class="status-toggle-group">
+                            <button type="button" class="status-toggle-btn" data-status="DEPLOYED">Deployed</button>
+                            <button type="button" class="status-toggle-btn" data-status="RESERVE">Reserve</button>
+                            <button type="button" class="status-toggle-btn" data-status="BROKEN">Broken</button>
+                            <button type="button" class="status-toggle-btn" data-status="SERVICE">Service</button>
+                        </div>
+                        <input type="hidden" id="auditItemStatus" value="DEPLOYED">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" id="cancelAddAuditItemBtn" class="px-6 py-2 border rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="button" id="submitAddAuditItemBtn" class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                            Add Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Remove Item from Audit Modal -->
+        <div id="removeAuditItemModal" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-material-4 w-full max-w-md z-50">
+            <div class="modal-container p-6">
+                <div class="modal-header flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Remove Item from Audit</h3>
+                    <button id="closeRemoveAuditItemModal" class="p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Select Item to Remove</label>
+                        <select id="removeAuditItemSelect" class="w-full px-4 py-2 border rounded-lg">
+                            <option value="">Select an item</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1">New Status</label>
+                        <div class="status-toggle-group">
+                            <button type="button" class="status-toggle-btn" data-status="DEPLOYED">Deployed</button>
+                            <button type="button" class="status-toggle-btn" data-status="RESERVE">Reserve</button>
+                            <button type="button" class="status-toggle-btn" data-status="BROKEN">Broken</button>
+                            <button type="button" class="status-toggle-btn" data-status="SERVICE">Service</button>
+                        </div>
+                        <input type="hidden" id="removeItemStatus" value="RESERVE">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1" for="removeItemVenue">Assign to Venue</label>
+                        <select id="removeItemVenue" class="w-full px-4 py-2 border rounded-lg">
+                            <option value="">Unassigned</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" id="cancelRemoveAuditItemBtn" class="px-6 py-2 border rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="button" id="submitRemoveAuditItemBtn" class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg">
+                            Remove Item
                         </button>
                     </div>
                 </div>
@@ -1697,6 +2024,7 @@
             items: [],
             currentAudit: null,
             recentActivity: [],
+            auditReports: [],
             currentView: 'dash',
             userProfile: {
                 name: "Inventor User",
@@ -1710,9 +2038,12 @@
                 auditReminders: true,
                 stockAlerts: true,
                 darkMode: false,
-                useSystemTheme: true
+                useSystemTheme: true,
+                inventoryViewMode: 'cards', // 'cards' or 'table'
+                categories: ['Moving Head', 'Turntable', 'Cable', 'PSU', 'Controller', 'Lighting', 'Audio', 'Video', 'Other']
             },
             darkModeManager: null,
+            availableBrands: [],
             
             // Initialize from localStorage
             init() {
@@ -1722,6 +2053,9 @@
                 const savedActivity = localStorage.getItem('inventor_activity');
                 const savedProfile = localStorage.getItem('inventor_profile');
                 const savedSettings = localStorage.getItem('inventor_settings');
+                const savedAuditReports = localStorage.getItem('inventor_auditReports');
+                const savedCategories = localStorage.getItem('inventor_categories');
+                const savedBrands = localStorage.getItem('inventor_brands');
                 
                 if (savedCompany) this.company = JSON.parse(savedCompany);
                 if (savedVenues) this.venues = JSON.parse(savedVenues);
@@ -1729,6 +2063,9 @@
                 if (savedActivity) this.recentActivity = JSON.parse(savedActivity);
                 if (savedProfile) this.userProfile = JSON.parse(savedProfile);
                 if (savedSettings) this.settings = JSON.parse(savedSettings);
+                if (savedAuditReports) this.auditReports = JSON.parse(savedAuditReports);
+                if (savedCategories) this.settings.categories = JSON.parse(savedCategories);
+                if (savedBrands) this.availableBrands = JSON.parse(savedBrands);
                 
                 // Initialize Dark Mode Manager
                 this.darkModeManager = new DarkModeManager();
@@ -1737,6 +2074,8 @@
                 this.updateHeader();
                 this.updateAuditVenues();
                 this.updateAccountInfo();
+                this.updateCategoriesList();
+                this.updateBrandList();
             },
             
             // Update header based on journal state
@@ -1764,6 +2103,9 @@
                 localStorage.setItem('inventor_activity', JSON.stringify(this.recentActivity));
                 localStorage.setItem('inventor_profile', JSON.stringify(this.userProfile));
                 localStorage.setItem('inventor_settings', JSON.stringify(this.settings));
+                localStorage.setItem('inventor_auditReports', JSON.stringify(this.auditReports));
+                localStorage.setItem('inventor_categories', JSON.stringify(this.settings.categories));
+                localStorage.setItem('inventor_brands', JSON.stringify(this.availableBrands));
             },
             
             // Toggle load journal prompt visibility
@@ -1810,10 +2152,15 @@
                 this.updateVenueFilters();
                 
                 // Update views
-                this.updateInventoryList();
+                if (this.settings.inventoryViewMode === 'cards') {
+                    this.updateInventoryCards();
+                } else {
+                    this.updateInventoryTable();
+                }
                 this.updateVenuesList();
                 this.updateActivityLog();
                 this.updateAuditVenues();
+                this.updateAuditReportsList();
                 
                 // Toggle load journal prompt
                 this.toggleLoadJournalPrompt();
@@ -1826,6 +2173,12 @@
                 
                 // Update account info
                 this.updateAccountInfo();
+                
+                // Update brand list
+                this.updateBrandList();
+                
+                // Update categories dropdown
+                this.updateCategoriesDropdown();
             },
             
             // Update account information
@@ -1856,7 +2209,7 @@
                 }
                 
                 // Update stats
-                const auditCount = this.recentActivity.filter(activity => activity.action.includes('Audit')).length;
+                const auditCount = this.auditReports.length;
                 document.getElementById('statItems').textContent = this.items.length;
                 document.getElementById('statVenues').textContent = this.venues.length;
                 document.getElementById('statAudits').textContent = auditCount;
@@ -1875,7 +2228,8 @@
                     items: this.items,
                     recentActivity: this.recentActivity,
                     userProfile: this.userProfile,
-                    settings: this.settings
+                    settings: this.settings,
+                    auditReports: this.auditReports
                 };
                 
                 const jsonString = JSON.stringify(data);
@@ -1895,10 +2249,12 @@
             updateVenueFilters() {
                 const venueFilter = document.getElementById('filterVenue');
                 const itemVenueSelect = document.getElementById('itemVenue');
+                const removeItemVenueSelect = document.getElementById('removeItemVenue');
                 
                 // Clear existing options (except first)
                 while (venueFilter.options.length > 1) venueFilter.remove(1);
                 while (itemVenueSelect.options.length > 1) itemVenueSelect.remove(1);
+                while (removeItemVenueSelect && removeItemVenueSelect.options.length > 1) removeItemVenueSelect.remove(1);
                 
                 // Add venue options
                 this.venues.forEach(venue => {
@@ -1906,16 +2262,19 @@
                     option.value = venue.id;
                     option.textContent = venue.name;
                     venueFilter.appendChild(option.cloneNode(true));
-                    itemVenueSelect.appendChild(option);
+                    itemVenueSelect.appendChild(option.cloneNode(true));
+                    if (removeItemVenueSelect) {
+                        removeItemVenueSelect.appendChild(option.cloneNode(true));
+                    }
                 });
                 
                 // Update tech check venues
                 this.updateAuditVenues();
             },
             
-            // Update inventory list
-            updateInventoryList(filterStatus = '', filterVenue = '', searchTerm = '') {
-                const inventoryList = document.getElementById('inventoryList');
+            // Update inventory cards view
+            updateInventoryCards(filterStatus = '', filterVenue = '', searchTerm = '') {
+                const inventoryCards = document.getElementById('inventoryCards');
                 
                 // Filter items
                 let filteredItems = this.items;
@@ -1939,7 +2298,7 @@
                 }
                 
                 if (filteredItems.length === 0) {
-                    inventoryList.innerHTML = `
+                    inventoryCards.innerHTML = `
                         <div class="text-center py-12 text-gray-500">
                             <i class="fas fa-box-open text-4xl mb-4"></i>
                             <p class="text-lg">No inventory items found</p>
@@ -1975,7 +2334,7 @@
                             <div class="mb-3">
                                 ${item.categories && item.categories.length > 0 ? 
                                     `<div class="flex flex-wrap gap-1 mb-2">
-                                        ${item.categories.map(cat => `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${cat}</span>`).join('')}
+                                        ${item.categories.map(cat => `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded dark:text-gray-200">${cat}</span>`).join('')}
                                     </div>` : ''
                                 }
                                 ${item.comment ? `<p class="text-gray-700 text-sm">${item.comment}</p>` : ''}
@@ -1988,6 +2347,9 @@
                                 <div class="flex space-x-2">
                                     <button class="qr-item-btn p-2 text-green-600 hover:bg-green-50 rounded" data-id="${item.id}" title="Generate QR Code">
                                         <i class="fas fa-qrcode"></i>
+                                    </button>
+                                    <button class="duplicate-item-btn p-2 text-teal-600 hover:bg-teal-50 rounded" data-id="${item.id}" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
                                     </button>
                                     <button class="edit-item-btn p-2 text-blue-600 hover:bg-blue-50 rounded" data-id="${item.id}">
                                         <i class="fas fa-edit"></i>
@@ -2002,9 +2364,92 @@
                 });
                 
                 html += '</div>';
-                inventoryList.innerHTML = html;
+                inventoryCards.innerHTML = html;
                 
                 // Add event listeners to buttons
+                this.addInventoryCardEventListeners();
+            },
+            
+            // Update inventory table view
+            updateInventoryTable(filterStatus = '', filterVenue = '', searchTerm = '') {
+                const inventoryTableBody = document.getElementById('inventoryTableBody');
+                
+                // Filter items
+                let filteredItems = this.items;
+                
+                if (filterStatus) {
+                    filteredItems = filteredItems.filter(item => item.status === filterStatus);
+                }
+                
+                if (filterVenue) {
+                    filteredItems = filteredItems.filter(item => item.venueId === filterVenue);
+                }
+                
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredItems = filteredItems.filter(item => 
+                        item.id.toLowerCase().includes(term) ||
+                        (item.brand && item.brand.toLowerCase().includes(term)) ||
+                        (item.model && item.model.toLowerCase().includes(term)) ||
+                        (item.comment && item.comment.toLowerCase().includes(term))
+                    );
+                }
+                
+                if (filteredItems.length === 0) {
+                    inventoryTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-8 text-gray-500">
+                                <i class="fas fa-box-open text-3xl mb-2 block mx-auto"></i>
+                                <p>No inventory items found</p>
+                                <p class="text-sm mt-1">Try adjusting your filters or add a new item</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Generate table rows
+                let html = '';
+                
+                filteredItems.forEach(item => {
+                    const venue = this.venues.find(v => v.id === item.venueId);
+                    const statusClass = `status-${item.status.toLowerCase()}`;
+                    
+                    html += `
+                        <tr>
+                            <td class="font-medium">${item.id}</td>
+                            <td>${item.brand || ''} ${item.model || ''}</td>
+                            <td>${item.categories ? item.categories.join(', ') : ''}</td>
+                            <td><span class="status-badge ${statusClass}">${item.status}</span></td>
+                            <td>${venue ? venue.name : 'Unassigned'}</td>
+                            <td>
+                                <div class="flex space-x-2">
+                                    <button class="qr-item-btn p-1 text-green-600 hover:bg-green-50 rounded" data-id="${item.id}" title="Generate QR Code">
+                                        <i class="fas fa-qrcode"></i>
+                                    </button>
+                                    <button class="duplicate-item-btn p-1 text-teal-600 hover:bg-teal-50 rounded" data-id="${item.id}" title="Duplicate">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="edit-item-btn p-1 text-blue-600 hover:bg-blue-50 rounded" data-id="${item.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-item-btn p-1 text-red-600 hover:bg-red-50 rounded" data-id="${item.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                inventoryTableBody.innerHTML = html;
+                
+                // Add event listeners to buttons
+                this.addInventoryTableEventListeners();
+            },
+            
+            // Add event listeners to inventory card buttons
+            addInventoryCardEventListeners() {
                 document.querySelectorAll('.edit-item-btn').forEach(btn => {
                     btn.addEventListener('click', () => this.editItem(btn.dataset.id));
                 });
@@ -2016,6 +2461,68 @@
                 document.querySelectorAll('.qr-item-btn').forEach(btn => {
                     btn.addEventListener('click', () => this.showQRCode(btn.dataset.id));
                 });
+                
+                document.querySelectorAll('.duplicate-item-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.duplicateItem(btn.dataset.id));
+                });
+            },
+            
+            // Add event listeners to inventory table buttons
+            addInventoryTableEventListeners() {
+                document.querySelectorAll('.edit-item-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.editItem(btn.dataset.id));
+                });
+                
+                document.querySelectorAll('.delete-item-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.deleteItem(btn.dataset.id));
+                });
+                
+                document.querySelectorAll('.qr-item-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.showQRCode(btn.dataset.id));
+                });
+                
+                document.querySelectorAll('.duplicate-item-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.duplicateItem(btn.dataset.id));
+                });
+            },
+            
+            // Duplicate an inventory item
+            duplicateItem(itemId) {
+                const item = this.items.find(i => i.id === itemId);
+                if (!item) return;
+                
+                // Create a copy of the item
+                const newItem = JSON.parse(JSON.stringify(item));
+                
+                // Generate a new ID by incrementing the numeric part
+                const baseMatch = item.id.match(/^([^\d]*)(\d+)$/);
+                if (baseMatch) {
+                    const base = baseMatch[1];
+                    let number = parseInt(baseMatch[2]) + 1;
+                    
+                    // Find an available ID
+                    while (this.items.some(i => i.id === base + number)) {
+                        number++;
+                    }
+                    
+                    newItem.id = base + number;
+                } else {
+                    // If no number at the end, add -1
+                    let counter = 1;
+                    while (this.items.some(i => i.id === item.id + '-' + counter)) {
+                        counter++;
+                    }
+                    newItem.id = item.id + '-' + counter;
+                }
+                
+                newItem.lastUpdated = new Date().toISOString();
+                
+                this.items.push(newItem);
+                this.save();
+                this.updateUI();
+                this.logActivity('Item Duplicated', `Duplicated ${item.id} to ${newItem.id}`);
+                
+                alert(`Item duplicated successfully! New ID: ${newItem.id}`);
             },
             
             // Show QR code for an item
@@ -2112,7 +2619,6 @@
                             <div class="flex justify-between items-start mb-4">
                                 <div>
                                     <h4 class="font-bold text-lg">${venue.name}</h4>
-                                    ${venue.address ? `<p class="text-gray-600 text-sm"><i class="fas fa-map-marker-alt mr-1"></i>${venue.address}</p>` : ''}
                                 </div>
                                 <div class="flex space-x-2">
                                     <button class="edit-venue-btn p-2 text-blue-600 hover:bg-blue-50 rounded" data-id="${venue.id}">
@@ -2125,9 +2631,7 @@
                             </div>
                             
                             <div class="mb-4">
-                                ${venue.contact ? `<p class="text-gray-700 text-sm"><i class="fas fa-user mr-1"></i>${venue.contact}</p>` : ''}
-                                ${venue.phone ? `<p class="text-gray-700 text-sm"><i class="fas fa-phone mr-1"></i>${venue.phone}</p>` : ''}
-                                ${venue.notes ? `<p class="text-gray-700 text-sm mt-2">${venue.notes}</p>` : ''}
+                                ${venue.notes ? `<p class="text-gray-700 text-sm">${venue.notes}</p>` : ''}
                             </div>
                             
                             <div class="flex justify-between items-center text-sm">
@@ -2205,6 +2709,7 @@
                 if (action.includes('Audit')) return 'clipboard-check';
                 if (action.includes('Loaded')) return 'folder-open';
                 if (action.includes('Exported')) return 'file-export';
+                if (action.includes('Duplicated')) return 'copy';
                 return 'history';
             },
             
@@ -2242,7 +2747,6 @@
                                 <div>
                                     <h4 class="font-bold text-lg">${venue.name}</h4>
                                     <p class="text-gray-600 text-sm mt-1">${itemCount} item${itemCount !== 1 ? 's' : ''} to check</p>
-                                    ${venue.address ? `<p class="text-gray-500 text-xs mt-2"><i class="fas fa-map-marker-alt mr-1"></i>${venue.address}</p>` : ''}
                                 </div>
                             </div>
                         </button>
@@ -2271,16 +2775,12 @@
                 // Get all items assigned to this venue
                 const venueItems = this.items.filter(item => item.venueId === venueId);
                 
-                if (venueItems.length === 0) {
-                    alert('No items assigned to this venue!');
-                    return;
-                }
-                
                 this.currentAudit = {
                     venueId: venue.id,
                     venueName: venue.name,
-                    items: venueItems,
-                    startTime: new Date().toISOString()
+                    items: [...venueItems], // Clone the array
+                    startTime: new Date().toISOString(),
+                    generalNotes: ''
                 };
                 
                 // Switch to tech check view
@@ -2294,60 +2794,80 @@
                 // Set venue name
                 document.getElementById('completedVenueName').textContent = venue.name;
                 
+                // Clear general notes
+                document.getElementById('auditGeneralNotes').value = '';
+                
                 // Generate tech check items
-                const auditItems = document.getElementById('auditItems');
-                let html = '';
-                
-                venueItems.forEach((item, index) => {
-                    html += `
-                        <div class="tech-check-item bg-gray-50 rounded-lg p-4">
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <h4 class="font-bold text-lg">${item.id}</h4>
-                                    <p class="text-gray-600 text-sm">${item.brand || ''} ${item.model || ''}</p>
-                                    ${item.categories && item.categories.length > 0 ? 
-                                        `<div class="flex flex-wrap gap-1 mt-1">
-                                            ${item.categories.map(cat => `<span class="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded">${cat}</span>`).join('')}
-                                        </div>` : ''
-                                    }
-                                </div>
-                                <span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="block text-sm font-medium mb-2">Status after check:</label>
-                                <div class="flex flex-wrap gap-2">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="status_${item.id}" value="DEPLOYED" ${item.status === 'DEPLOYED' ? 'checked' : ''} class="mr-2">
-                                        <span class="status-badge status-deployed">Deployed</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="status_${item.id}" value="RESERVE" ${item.status === 'RESERVE' ? 'checked' : ''} class="mr-2">
-                                        <span class="status-badge status-reserve">Reserve</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="status_${item.id}" value="BROKEN" ${item.status === 'BROKEN' ? 'checked' : ''} class="mr-2">
-                                        <span class="status-badge status-broken">Broken</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="status_${item.id}" value="SERVICE" ${item.status === 'SERVICE' ? 'checked' : ''} class="mr-2">
-                                        <span class="status-badge status-service">Service</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-1">Check Notes (optional):</label>
-                                <textarea class="w-full px-3 py-2 border rounded-lg text-sm tech-check-notes" data-id="${item.id}" placeholder="Any notes about this item's condition..."></textarea>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                auditItems.innerHTML = html;
+                this.updateAuditItems();
                 
                 // Scroll to top
                 window.scrollTo(0, 0);
+            },
+            
+            // Update audit items display
+            updateAuditItems() {
+                if (!this.currentAudit) return;
+                
+                const auditItems = document.getElementById('auditItems');
+                let html = '';
+                
+                if (this.currentAudit.items.length === 0) {
+                    html = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-box text-3xl mb-3"></i>
+                            <p>No items assigned to this audit</p>
+                            <p class="text-sm mt-1">Use the "Add Item" button to add items to this audit</p>
+                        </div>
+                    `;
+                } else {
+                    this.currentAudit.items.forEach((item, index) => {
+                        html += `
+                            <div class="tech-check-item bg-gray-50 rounded-lg p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div>
+                                        <h4 class="font-bold text-lg">${item.id}</h4>
+                                        <p class="text-gray-600 text-sm">${item.brand || ''} ${item.model || ''}</p>
+                                        ${item.categories && item.categories.length > 0 ? 
+                                            `<div class="flex flex-wrap gap-1 mt-1">
+                                                ${item.categories.map(cat => `<span class="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded dark:text-gray-200">${cat}</span>`).join('')}
+                                            </div>` : ''
+                                        }
+                                    </div>
+                                    <span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="block text-sm font-medium mb-2">Status after check:</label>
+                                    <div class="flex flex-wrap gap-2">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="status_${item.id}" value="DEPLOYED" ${item.status === 'DEPLOYED' ? 'checked' : ''} class="mr-2">
+                                            <span class="status-badge status-deployed">Deployed</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="status_${item.id}" value="RESERVE" ${item.status === 'RESERVE' ? 'checked' : ''} class="mr-2">
+                                            <span class="status-badge status-reserve">Reserve</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="status_${item.id}" value="BROKEN" ${item.status === 'BROKEN' ? 'checked' : ''} class="mr-2">
+                                            <span class="status-badge status-broken">Broken</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="status_${item.id}" value="SERVICE" ${item.status === 'SERVICE' ? 'checked' : ''} class="mr-2">
+                                            <span class="status-badge status-service">Service</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Check Notes (optional):</label>
+                                    <textarea class="w-full px-3 py-2 border rounded-lg text-sm tech-check-notes" data-id="${item.id}" placeholder="Any notes about this item's condition...">${item.auditNotes && item.auditNotes.length > 0 ? item.auditNotes[item.auditNotes.length - 1].notes : ''}</textarea>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                auditItems.innerHTML = html;
             },
             
             // Complete tech check
@@ -2357,6 +2877,9 @@
                 const venueId = this.currentAudit.venueId;
                 const venueItems = this.currentAudit.items;
                 let changesMade = false;
+                
+                // Get general notes
+                this.currentAudit.generalNotes = document.getElementById('auditGeneralNotes').value;
                 
                 // Update each item's status based on radio buttons
                 venueItems.forEach(item => {
@@ -2379,6 +2902,15 @@
                     }
                 });
                 
+                // Update the actual items in the inventory
+                venueItems.forEach(auditItem => {
+                    const inventoryItem = this.items.find(i => i.id === auditItem.id);
+                    if (inventoryItem) {
+                        inventoryItem.status = auditItem.status;
+                        inventoryItem.auditNotes = auditItem.auditNotes;
+                    }
+                });
+                
                 // Log activity if changes were made
                 if (changesMade) {
                     const venue = this.venues.find(v => v.id === venueId);
@@ -2387,6 +2919,9 @@
                     this.updateUI();
                 }
                 
+                // Save audit report
+                this.saveAuditReport();
+                
                 // Show completion step
                 document.getElementById('auditStep2').classList.add('hidden');
                 document.getElementById('auditCompleteStep').classList.remove('hidden');
@@ -2394,6 +2929,176 @@
                 // Update current tech check
                 this.currentAudit.endTime = new Date().toISOString();
                 this.currentAudit.changesMade = changesMade;
+            },
+            
+            // Save audit report
+            saveAuditReport() {
+                if (!this.currentAudit) return;
+                
+                const report = {
+                    venueId: this.currentAudit.venueId,
+                    venueName: this.currentAudit.venueName,
+                    startTime: this.currentAudit.startTime,
+                    endTime: new Date().toISOString(),
+                    items: this.currentAudit.items.map(item => {
+                        return {
+                            id: item.id,
+                            brand: item.brand || '',
+                            model: item.model || '',
+                            status: item.status,
+                            notes: item.auditNotes && item.auditNotes.length > 0 ? 
+                                item.auditNotes[item.auditNotes.length - 1].notes : ''
+                        };
+                    }),
+                    generalNotes: this.currentAudit.generalNotes
+                };
+                
+                this.auditReports.unshift(report);
+                this.save();
+                this.updateAuditReportsList();
+            },
+            
+            // Update audit reports list
+            updateAuditReportsList() {
+                const container = document.getElementById('auditReportsList');
+                
+                if (this.auditReports.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12 text-gray-500">
+                            <i class="fas fa-file-alt text-4xl mb-4"></i>
+                            <p class="text-lg">No audit reports available</p>
+                            <p class="mt-2">Complete an audit to generate a report</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                
+                this.auditReports.forEach((report, index) => {
+                    const date = new Date(report.endTime);
+                    const dateString = date.toLocaleDateString();
+                    const timeString = date.toLocaleTimeString();
+                    
+                    html += `
+                        <div class="bg-white rounded-xl shadow-material-1 p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="font-bold text-lg">${report.venueName}</h4>
+                                    <p class="text-gray-600 text-sm">${dateString} ${timeString}</p>
+                                    ${report.generalNotes ? `<p class="text-gray-700 mt-2">${report.generalNotes}</p>` : ''}
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="view-audit-report-btn px-3 py-1 bg-primary hover:bg-primary-dark text-white rounded text-sm" data-index="${index}">
+                                        View
+                                    </button>
+                                    <button class="delete-audit-report-btn px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm" data-index="${index}">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 text-sm">${report.items.length} item${report.items.length !== 1 ? 's' : ''} checked</p>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Add event listeners
+                document.querySelectorAll('.view-audit-report-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.dataset.index);
+                        this.viewAuditReport(index);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-audit-report-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.dataset.index);
+                        if (confirm('Are you sure you want to delete this audit report?')) {
+                            this.auditReports.splice(index, 1);
+                            this.save();
+                            this.updateAuditReportsList();
+                        }
+                    });
+                });
+            },
+            
+            // View audit report
+            viewAuditReport(index) {
+                const report = this.auditReports[index];
+                if (!report) return;
+                
+                const startTime = new Date(report.startTime);
+                const endTime = new Date(report.endTime);
+                
+                let reportHtml = `
+                    <div class="mb-6">
+                        <h4 class="font-bold text-lg mb-2">Audit Report</h4>
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Venue</p>
+                                <p class="font-medium">${report.venueName}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Date</p>
+                                <p class="font-medium">${endTime.toLocaleDateString()} ${endTime.toLocaleTimeString()}</p>
+                            </div>
+                        </div>
+                        
+                        ${report.generalNotes ? `
+                            <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-600 mb-1">General Notes:</p>
+                                <p>${report.generalNotes}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h5 class="font-bold mb-3">Equipment Summary</h5>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm compact-table">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="text-left p-2">Item</th>
+                                        <th class="text-left p-2">Status</th>
+                                        <th class="text-left p-2">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                report.items.forEach(item => {
+                    reportHtml += `
+                        <tr class="border-b">
+                            <td class="p-2">
+                                <div class="item-combined">
+                                    <span class="item-id">${item.id}</span>
+                                    <span class="item-details">${item.brand} ${item.model}</span>
+                                </div>
+                            </td>
+                            <td class="p-2"><span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span></td>
+                            <td class="p-2">${item.notes || ''}</td>
+                        </tr>
+                    `;
+                });
+                
+                reportHtml += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h5 class="font-bold mb-2">Summary</h5>
+                        <p>Total items checked: <span class="font-medium">${report.items.length}</span></p>
+                        <p>Check duration: <span class="font-medium">${Math.round((endTime - startTime) / 60000)} minutes</span></p>
+                        <p class="mt-2 text-sm">Report generated on ${endTime.toLocaleDateString()} at ${endTime.toLocaleTimeString()}</p>
+                    </div>
+                `;
+                
+                document.getElementById('reportContent').innerHTML = reportHtml;
+                this.showModal('reportModal');
             },
             
             // Generate tech check report
@@ -2419,17 +3124,22 @@
                                 <p class="font-medium">${endTime.toLocaleDateString()} ${endTime.toLocaleTimeString()}</p>
                             </div>
                         </div>
+                        
+                        ${this.currentAudit.generalNotes ? `
+                            <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-600 mb-1">General Notes:</p>
+                                <p>${this.currentAudit.generalNotes}</p>
+                            </div>
+                        ` : ''}
                     </div>
                     
                     <div class="mb-6">
                         <h5 class="font-bold mb-3">Equipment Summary</h5>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
+                            <table class="w-full text-sm compact-table">
                                 <thead>
                                     <tr class="bg-gray-100">
-                                        <th class="text-left p-2">Item ID</th>
-                                        <th class="text-left p-2">Brand/Model</th>
-                                        <th class="text-left p-2">Category</th>
+                                        <th class="text-left p-2">Item</th>
                                         <th class="text-left p-2">Status</th>
                                         <th class="text-left p-2">Notes</th>
                                     </tr>
@@ -2444,9 +3154,12 @@
                     
                     reportHtml += `
                         <tr class="border-b">
-                            <td class="p-2 font-medium">${item.id}</td>
-                            <td class="p-2">${item.brand || ''} ${item.model || ''}</td>
-                            <td class="p-2">${item.categories ? item.categories.join(', ') : ''}</td>
+                            <td class="p-2">
+                                <div class="item-combined">
+                                    <span class="item-id">${item.id}</span>
+                                    <span class="item-details">${item.brand || ''} ${item.model || ''}</span>
+                                </div>
+                            </td>
                             <td class="p-2"><span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span></td>
                             <td class="p-2">${lastNote}</td>
                         </tr>
@@ -2503,6 +3216,14 @@
                 document.getElementById('itemVenue').value = item.venueId || '';
                 document.getElementById('itemComment').value = item.comment || '';
                 
+                // Update status toggle buttons
+                document.querySelectorAll('.status-toggle-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.status === item.status) {
+                        btn.classList.add('active');
+                    }
+                });
+                
                 // Update categories display
                 const selectedCategories = document.getElementById('selectedCategories');
                 selectedCategories.innerHTML = '';
@@ -2557,13 +3278,19 @@
                     lastUpdated: new Date().toISOString()
                 };
                 
+                // Add brand to available brands if not empty
+                if (itemData.brand && !this.availableBrands.includes(itemData.brand)) {
+                    this.availableBrands.push(itemData.brand);
+                    this.save();
+                }
+                
                 // Handle image if present
                 const imageInput = document.getElementById('itemImage');
                 if (imageInput.files && imageInput.files[0]) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         itemData.image = e.target.result;
-                        this.finalizeItemSave(itemData, isEdit);
+                        this.finalizeItemSave(itemData, isEdit, itemId);
                     };
                     reader.readAsDataURL(imageInput.files[0]);
                 } else {
@@ -2574,15 +3301,15 @@
                             itemData.image = existingItem.image;
                         }
                     }
-                    this.finalizeItemSave(itemData, isEdit);
+                    this.finalizeItemSave(itemData, isEdit, itemId);
                 }
             },
             
             // Finalize item save
-            finalizeItemSave(itemData, isEdit) {
+            finalizeItemSave(itemData, isEdit, oldItemId) {
                 if (isEdit) {
                     // Update existing item
-                    const index = this.items.findIndex(i => i.id === document.getElementById('itemId').value);
+                    const index = this.items.findIndex(i => i.id === oldItemId);
                     if (index !== -1) {
                         this.items[index] = itemData;
                         this.logActivity('Item Updated', `Updated ${itemData.id}`);
@@ -2640,9 +3367,6 @@
                 // Populate form
                 document.getElementById('venueId').value = venue.id;
                 document.getElementById('venueName').value = venue.name;
-                document.getElementById('venueAddress').value = venue.address || '';
-                document.getElementById('venueContact').value = venue.contact || '';
-                document.getElementById('venuePhone').value = venue.phone || '';
                 document.getElementById('venueNotes').value = venue.notes || '';
                 
                 // Update modal title
@@ -2661,9 +3385,6 @@
                 const venueData = {
                     id: venueId || 'VENUE-' + Date.now().toString().slice(-6),
                     name: document.getElementById('venueName').value,
-                    address: document.getElementById('venueAddress').value,
-                    contact: document.getElementById('venueContact').value,
-                    phone: document.getElementById('venuePhone').value,
                     notes: document.getElementById('venueNotes').value
                 };
                 
@@ -2789,8 +3510,9 @@
                     recentActivity: this.recentActivity,
                     userProfile: this.userProfile,
                     settings: this.settings,
+                    auditReports: this.auditReports,
                     exported: new Date().toISOString(),
-                    version: '1.0'
+                    version: '1.1'
                 };
                 
                 const jsonString = JSON.stringify(allData, null, 2);
@@ -2826,6 +3548,7 @@
                     if (data.recentActivity) this.recentActivity = data.recentActivity;
                     if (data.userProfile) this.userProfile = data.userProfile;
                     if (data.settings) this.settings = data.settings;
+                    if (data.auditReports) this.auditReports = data.auditReports;
                     
                     // Save to localStorage
                     this.save();
@@ -2857,6 +3580,7 @@
                 this.venues = [];
                 this.items = [];
                 this.recentActivity = [];
+                this.auditReports = [];
                 
                 this.save();
                 this.updateUI();
@@ -2868,12 +3592,13 @@
             
             // Clear all data
             clearAllData() {
-                if (confirm('Are you sure you want to clear all data? This will remove all inventory items, venues, and settings. This action cannot be undone.')) {
+                if (confirm('Are you sure you want to clear all data? This will remove all inventory items, venues, audit reports, and settings. This action cannot be undone.')) {
                     localStorage.clear();
                     this.company = null;
                     this.venues = [];
                     this.items = [];
                     this.recentActivity = [];
+                    this.auditReports = [];
                     this.userProfile = {
                         name: "Inventor User",
                         email: "",
@@ -2886,8 +3611,11 @@
                         auditReminders: true,
                         stockAlerts: true,
                         darkMode: false,
-                        useSystemTheme: true
+                        useSystemTheme: true,
+                        inventoryViewMode: 'cards',
+                        categories: ['Moving Head', 'Turntable', 'Cable', 'PSU', 'Controller', 'Lighting', 'Audio', 'Video', 'Other']
                     };
+                    this.availableBrands = [];
                     
                     // Reset UI
                     this.updateUI();
@@ -2982,6 +3710,232 @@
                 this.logActivity('Company Name Updated', `Changed from "${oldName}" to "${newName}"`);
                 
                 alert('Company name updated successfully!');
+            },
+            
+            // Update categories dropdown
+            updateCategoriesDropdown() {
+                const categorySelect = document.getElementById('itemCategorySelect');
+                categorySelect.innerHTML = '<option value="">Select a category</option>';
+                
+                this.settings.categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categorySelect.appendChild(option);
+                });
+            },
+            
+            // Update categories list in settings
+            updateCategoriesList() {
+                const categoriesList = document.getElementById('categoriesList');
+                categoriesList.innerHTML = '';
+                
+                this.settings.categories.forEach(category => {
+                    const tag = document.createElement('div');
+                    tag.className = 'category-tag';
+                    tag.innerHTML = `
+                        ${category}
+                        <span class="remove-category" data-category="${category}">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    `;
+                    categoriesList.appendChild(tag);
+                });
+                
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.remove-category').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const category = btn.dataset.category;
+                        this.removeCategory(category);
+                    });
+                });
+            },
+            
+            // Add new category
+            addNewCategory() {
+                const newCategoryInput = document.getElementById('newCategoryInput');
+                const category = newCategoryInput.value.trim();
+                
+                if (!category) {
+                    alert('Please enter a category name.');
+                    return;
+                }
+                
+                if (this.settings.categories.includes(category)) {
+                    alert('This category already exists.');
+                    return;
+                }
+                
+                this.settings.categories.push(category);
+                this.save();
+                this.updateCategoriesDropdown();
+                this.updateCategoriesList();
+                newCategoryInput.value = '';
+                
+                alert(`Category "${category}" added successfully!`);
+            },
+            
+            // Remove category
+            removeCategory(category) {
+                if (!confirm(`Are you sure you want to remove the category "${category}"?`)) {
+                    return;
+                }
+                
+                const index = this.settings.categories.indexOf(category);
+                if (index !== -1) {
+                    this.settings.categories.splice(index, 1);
+                    this.save();
+                    this.updateCategoriesDropdown();
+                    this.updateCategoriesList();
+                    alert(`Category "${category}" removed successfully!`);
+                }
+            },
+            
+            // Update brand list
+            updateBrandList() {
+                const brandList = document.getElementById('brandList');
+                brandList.innerHTML = '';
+                
+                // Collect all brands from items
+                const allBrands = new Set();
+                this.items.forEach(item => {
+                    if (item.brand) {
+                        allBrands.add(item.brand);
+                    }
+                });
+                
+                // Add available brands
+                this.availableBrands.forEach(brand => {
+                    allBrands.add(brand);
+                });
+                
+                // Populate datalist
+                allBrands.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand;
+                    brandList.appendChild(option);
+                });
+            },
+            
+            // Show add item to audit modal
+            showAddItemToAuditModal() {
+                if (!this.currentAudit) return;
+                
+                const select = document.getElementById('auditItemSelect');
+                select.innerHTML = '<option value="">Select an item</option>';
+                
+                // Get items not already in the audit
+                const auditItemIds = this.currentAudit.items.map(item => item.id);
+                const availableItems = this.items.filter(item => !auditItemIds.includes(item.id));
+                
+                if (availableItems.length === 0) {
+                    alert('No available items to add to audit.');
+                    return;
+                }
+                
+                availableItems.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = `${item.id} - ${item.brand || ''} ${item.model || ''}`;
+                    select.appendChild(option);
+                });
+                
+                // Reset status toggle
+                document.querySelectorAll('.status-toggle-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.status === 'DEPLOYED') {
+                        btn.classList.add('active');
+                    }
+                });
+                document.getElementById('auditItemStatus').value = 'DEPLOYED';
+                
+                this.showModal('addAuditItemModal');
+            },
+            
+            // Add item to audit
+            addItemToAudit() {
+                const select = document.getElementById('auditItemSelect');
+                const itemId = select.value;
+                const status = document.getElementById('auditItemStatus').value;
+                
+                if (!itemId) {
+                    alert('Please select an item.');
+                    return;
+                }
+                
+                const item = this.items.find(i => i.id === itemId);
+                if (!item) {
+                    alert('Item not found.');
+                    return;
+                }
+                
+                // Create a copy of the item with the selected status
+                const auditItem = JSON.parse(JSON.stringify(item));
+                auditItem.status = status;
+                
+                // Add to audit
+                this.currentAudit.items.push(auditItem);
+                this.updateAuditItems();
+                this.hideModal('addAuditItemModal');
+            },
+            
+            // Show remove item from audit modal
+            showRemoveItemFromAuditModal() {
+                if (!this.currentAudit || this.currentAudit.items.length === 0) {
+                    alert('No items in audit to remove.');
+                    return;
+                }
+                
+                const select = document.getElementById('removeAuditItemSelect');
+                select.innerHTML = '<option value="">Select an item</option>';
+                
+                this.currentAudit.items.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = `${item.id} - ${item.brand || ''} ${item.model || ''}`;
+                    select.appendChild(option);
+                });
+                
+                // Reset status toggle
+                document.querySelectorAll('.status-toggle-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.status === 'RESERVE') {
+                        btn.classList.add('active');
+                    }
+                });
+                document.getElementById('removeItemStatus').value = 'RESERVE';
+                
+                this.showModal('removeAuditItemModal');
+            },
+            
+            // Remove item from audit
+            removeItemFromAudit() {
+                const select = document.getElementById('removeAuditItemSelect');
+                const itemId = select.value;
+                const status = document.getElementById('removeItemStatus').value;
+                const venueId = document.getElementById('removeItemVenue').value || null;
+                
+                if (!itemId) {
+                    alert('Please select an item.');
+                    return;
+                }
+                
+                // Remove from audit
+                const index = this.currentAudit.items.findIndex(item => item.id === itemId);
+                if (index !== -1) {
+                    this.currentAudit.items.splice(index, 1);
+                    
+                    // Update the actual item if it exists
+                    const inventoryItem = this.items.find(i => i.id === itemId);
+                    if (inventoryItem) {
+                        inventoryItem.status = status;
+                        inventoryItem.venueId = venueId;
+                    }
+                    
+                    this.updateAuditItems();
+                    this.hideModal('removeAuditItemModal');
+                }
             },
             
             // Show a specific view
@@ -3093,6 +4047,16 @@
             
             // Event Listeners
             
+            // Create new journal buttons
+            document.getElementById('createNewJournalBtn').addEventListener('click', () => {
+                AppState.createNewJournal();
+            });
+            
+            document.getElementById('menuCreateJournal').addEventListener('click', () => {
+                AppState.createNewJournal();
+                AppState.hideMenu();
+            });
+            
             // Load journal buttons
             document.getElementById('loadJournalHeaderBtn').addEventListener('click', () => {
                 document.getElementById('journalFileInput').click();
@@ -3183,6 +4147,16 @@
                 document.getElementById('itemImage').value = '';
                 document.getElementById('itemModalTitle').textContent = 'Add Inventory Item';
                 document.getElementById('itemId').value = '';
+                
+                // Reset status toggle
+                document.querySelectorAll('.status-toggle-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.status === 'DEPLOYED') {
+                        btn.classList.add('active');
+                    }
+                });
+                document.getElementById('itemStatus').value = 'DEPLOYED';
+                
                 AppState.showModal('itemModal');
             });
             
@@ -3199,6 +4173,27 @@
                 AppState.showModal('venueModal');
             });
             
+            // View toggle buttons
+            document.getElementById('viewCardsBtn').addEventListener('click', () => {
+                AppState.settings.inventoryViewMode = 'cards';
+                AppState.save();
+                document.getElementById('viewCardsBtn').classList.add('active');
+                document.getElementById('viewTableBtn').classList.remove('active');
+                document.getElementById('inventoryCards').classList.remove('hidden');
+                document.getElementById('inventoryTable').classList.add('hidden');
+                AppState.updateUI();
+            });
+            
+            document.getElementById('viewTableBtn').addEventListener('click', () => {
+                AppState.settings.inventoryViewMode = 'table';
+                AppState.save();
+                document.getElementById('viewTableBtn').classList.add('active');
+                document.getElementById('viewCardsBtn').classList.remove('active');
+                document.getElementById('inventoryCards').classList.add('hidden');
+                document.getElementById('inventoryTable').classList.remove('hidden');
+                AppState.updateUI();
+            });
+            
             // Add item button
             document.getElementById('addItemBtn').addEventListener('click', () => {
                 // Reset form for new item
@@ -3209,6 +4204,16 @@
                 document.getElementById('itemImage').value = '';
                 document.getElementById('itemModalTitle').textContent = 'Add Inventory Item';
                 document.getElementById('itemId').value = '';
+                
+                // Reset status toggle
+                document.querySelectorAll('.status-toggle-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.status === 'DEPLOYED') {
+                        btn.classList.add('active');
+                    }
+                });
+                document.getElementById('itemStatus').value = 'DEPLOYED';
+                
                 AppState.showModal('itemModal');
             });
             
@@ -3222,6 +4227,54 @@
             document.getElementById('submitItemBtn').addEventListener('click', (e) => {
                 e.preventDefault();
                 document.getElementById('itemForm').dispatchEvent(new Event('submit'));
+            });
+            
+            // Status toggle buttons in item modal
+            document.querySelectorAll('#itemModal .status-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('#itemModal .status-toggle-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Set the hidden input value
+                    document.getElementById('itemStatus').value = btn.dataset.status;
+                });
+            });
+            
+            // Status toggle buttons in add audit item modal
+            document.querySelectorAll('#addAuditItemModal .status-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('#addAuditItemModal .status-toggle-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Set the hidden input value
+                    document.getElementById('auditItemStatus').value = btn.dataset.status;
+                });
+            });
+            
+            // Status toggle buttons in remove audit item modal
+            document.querySelectorAll('#removeAuditItemModal .status-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('#removeAuditItemModal .status-toggle-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Set the hidden input value
+                    document.getElementById('removeItemStatus').value = btn.dataset.status;
+                });
             });
             
             // QR Code button
@@ -3327,6 +4380,11 @@
                 }
             });
             
+            // Add new category button in settings
+            document.getElementById('addNewCategoryBtn').addEventListener('click', () => {
+                AppState.addNewCategory();
+            });
+            
             // Item image button
             document.getElementById('itemImageBtn').addEventListener('click', () => {
                 document.getElementById('itemImage').click();
@@ -3408,21 +4466,36 @@
                 const searchTerm = e.target.value;
                 const filterStatus = document.getElementById('filterStatus').value;
                 const filterVenue = document.getElementById('filterVenue').value;
-                AppState.updateInventoryList(filterStatus, filterVenue, searchTerm);
+                
+                if (AppState.settings.inventoryViewMode === 'cards') {
+                    AppState.updateInventoryCards(filterStatus, filterVenue, searchTerm);
+                } else {
+                    AppState.updateInventoryTable(filterStatus, filterVenue, searchTerm);
+                }
             });
             
             document.getElementById('filterStatus').addEventListener('change', (e) => {
                 const filterStatus = e.target.value;
                 const filterVenue = document.getElementById('filterVenue').value;
                 const searchTerm = document.getElementById('searchInventory').value;
-                AppState.updateInventoryList(filterStatus, filterVenue, searchTerm);
+                
+                if (AppState.settings.inventoryViewMode === 'cards') {
+                    AppState.updateInventoryCards(filterStatus, filterVenue, searchTerm);
+                } else {
+                    AppState.updateInventoryTable(filterStatus, filterVenue, searchTerm);
+                }
             });
             
             document.getElementById('filterVenue').addEventListener('change', (e) => {
                 const filterVenue = e.target.value;
                 const filterStatus = document.getElementById('filterStatus').value;
                 const searchTerm = document.getElementById('searchInventory').value;
-                AppState.updateInventoryList(filterStatus, filterVenue, searchTerm);
+                
+                if (AppState.settings.inventoryViewMode === 'cards') {
+                    AppState.updateInventoryCards(filterStatus, filterVenue, searchTerm);
+                } else {
+                    AppState.updateInventoryTable(filterStatus, filterVenue, searchTerm);
+                }
             });
             
             // Tech check buttons
@@ -3444,6 +4517,41 @@
             
             document.getElementById('auditViewReport').addEventListener('click', () => {
                 AppState.generateAuditReport();
+            });
+            
+            // Add/Remove item from audit buttons
+            document.getElementById('addItemToAuditBtn').addEventListener('click', () => {
+                AppState.showAddItemToAuditModal();
+            });
+            
+            document.getElementById('removeItemFromAuditBtn').addEventListener('click', () => {
+                AppState.showRemoveItemFromAuditModal();
+            });
+            
+            // Add audit item modal
+            document.getElementById('closeAddAuditItemModal').addEventListener('click', () => {
+                AppState.hideModal('addAuditItemModal');
+            });
+            
+            document.getElementById('cancelAddAuditItemBtn').addEventListener('click', () => {
+                AppState.hideModal('addAuditItemModal');
+            });
+            
+            document.getElementById('submitAddAuditItemBtn').addEventListener('click', () => {
+                AppState.addItemToAudit();
+            });
+            
+            // Remove audit item modal
+            document.getElementById('closeRemoveAuditItemModal').addEventListener('click', () => {
+                AppState.hideModal('removeAuditItemModal');
+            });
+            
+            document.getElementById('cancelRemoveAuditItemBtn').addEventListener('click', () => {
+                AppState.hideModal('removeAuditItemModal');
+            });
+            
+            document.getElementById('submitRemoveAuditItemBtn').addEventListener('click', () => {
+                AppState.removeItemFromAudit();
             });
             
             // Report modal
@@ -3514,7 +4622,7 @@
             
             // About button
             document.getElementById('aboutInventorBtn').addEventListener('click', () => {
-                alert('Inventor v1.0\n\nA Progressive Web App for inventory management and tech checks.\n\nFeatures:\n- Inventory tracking\n- Venue management\n- Equipment audits\n- QR code generation\n- Dark mode\n- Offline support\n\nBuilt with Tailwind CSS and vanilla JavaScript.');
+                alert('Inventor v1.1\n\nA Progressive Web App for inventory management and tech checks.\n\nFeatures:\n- Inventory tracking\n- Venue management\n- Equipment audits\n- QR code generation\n- Dark mode\n- Offline support\n- Audit reports\n\nBuilt with Tailwind CSS and vanilla JavaScript.');
             });
             
             // Account page event listeners
@@ -3637,6 +4745,12 @@
                     document.getElementById('journalFileInput').click();
                 }
                 
+                // Ctrl/Cmd + N to create new journal
+                if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                    e.preventDefault();
+                    AppState.createNewJournal();
+                }
+                
                 // Escape to close modals
                 if (e.key === 'Escape') {
                     AppState.hideModal();
@@ -3658,6 +4772,19 @@
             document.addEventListener('drop', (e) => {
                 e.preventDefault();
             });
+            
+            // Initialize view toggle buttons based on current setting
+            if (AppState.settings.inventoryViewMode === 'cards') {
+                document.getElementById('viewCardsBtn').classList.add('active');
+                document.getElementById('viewTableBtn').classList.remove('active');
+                document.getElementById('inventoryCards').classList.remove('hidden');
+                document.getElementById('inventoryTable').classList.add('hidden');
+            } else {
+                document.getElementById('viewTableBtn').classList.add('active');
+                document.getElementById('viewCardsBtn').classList.remove('active');
+                document.getElementById('inventoryCards').classList.add('hidden');
+                document.getElementById('inventoryTable').classList.remove('hidden');
+            }
         });
     </script>
 </body>
