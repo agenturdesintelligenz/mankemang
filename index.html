@@ -3717,12 +3717,15 @@
                 const categorySelect = document.getElementById('itemCategorySelect');
                 categorySelect.innerHTML = '<option value="">Select a category</option>';
                 
-                this.settings.categories.forEach(category => {
+                if("undefined" !== typeof this.settings.categories) {
+                  this.settings.categories.forEach(category => {
                     const option = document.createElement('option');
                     option.value = category;
                     option.textContent = category;
                     categorySelect.appendChild(option);
-                });
+                });                    
+                }
+                
             },
             
             // Update categories list in settings
