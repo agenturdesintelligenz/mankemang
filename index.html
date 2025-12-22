@@ -9,47 +9,42 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="manifest" id="manifest">
-    <style type="text/tailwindcss">
-    
-      @theme {
-        --spacing: 3px;
-      }
-    
-       /* :root {
-            
-            --primary-color: oklch(0.205 0 0);
-            --primary-light: oklch(0.205 0 0);
-            --primary-dark: oklch(0.922 0 0);
-            --secondary-color: oklch(0.97 0 0);
+    <style>
+        :root {
+            /* DeepSeek Theme Colors */
+            --primary-color: #1e88e5;
+            --primary-light: #64b5f6;
+            --primary-dark: #1565c0;
+            --secondary-color: #00acc1;
             --success-color: #4caf50;
             --warning-color: #ff9800;
-            --danger-color: oklch(0.577 0.245 27.325);
+            --danger-color: #f44336;
             --deepseek-blue: #1e88e5;
             --deepseek-light-blue: #e3f2fd;
             
-            
-            --bg-color: oklch(1 0 0);
-            --text-color: oklch(0.145 0 0);
-            --card-bg: oklch(1 0 0);
-            --card-border: oklch(1 0 0);
-            --sidebar-bg: oklch(0.985 0 0);
-            --input-bg: oklch(0.922 0 0);
-            --input-border: oklch(0.922 0 0);
-            --modal-bg: var(--bg-color);
+            /* Light theme variables */
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --sidebar-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --modal-bg: #ffffff;
             --nav-bg: #ffffff;
             --hover-bg: #f1f5f9;
             --shadow-color: rgba(15, 23, 42, 0.08);
         }
         
-        
+        /* Dark theme variables */
         .dark-mode {
-            --bg-color: oklch(0.145 0 0);
-            --text-color: oklch(0.985 0 0);
+            --bg-color: #0f172a;
+            --text-color: #f1f5f9;
             --card-bg: #1e293b;
             --card-border: #334155;
             --sidebar-bg: #1e293b;
-            --input-bg: oklch(1 0 0 / 15%);
-            --input-border: oklch(1 0 0 / 15%);
+            --input-bg: #334155;
+            --input-border: #475569;
             --modal-bg: #1e293b;
             --nav-bg: #1e293b;
             --hover-bg: #334155;
@@ -61,9 +56,8 @@
             color: var(--text-color);
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-        */
         
-        /* Apply theme variables 
+        /* Apply theme variables */
         .bg-white {
             background-color: var(--card-bg) !important;
         }
@@ -79,7 +73,6 @@
         .border {
             border-color: var(--card-border) !important;
         }
-        */
         
         /* PWA Styles */
         @media (display-mode: standalone) {
@@ -88,7 +81,7 @@
             }
         }
         
-        /* Custom scrollbar 
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -106,9 +99,8 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
-        */
         
-        /* Material Design inspired shadows 
+        /* Material Design inspired shadows */
         .shadow-material-1 {
             box-shadow: 0 1px 3px var(--shadow-color), 0 1px 2px var(--shadow-color);
         }
@@ -124,9 +116,8 @@
         .shadow-material-4 {
             box-shadow: 0 14px 28px var(--shadow-color), 0 10px 10px var(--shadow-color);
         }
-        */
         
-        /* Animations 
+        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -134,9 +125,9 @@
         
         .fade-in {
             animation: fadeIn 0.3s ease-out forwards;
-        }*/
+        }
         
-        /* Status badges 
+        /* Status badges */
         .status-badge {
             padding: 4px 12px;
             border-radius: 20px;
@@ -165,7 +156,6 @@
             background-color: rgba(255, 152, 0, 0.1);
             color: #ef6c00;
         }
-        */
         
         /* iPhone 13 Pro specific optimizations */
         @media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
@@ -184,7 +174,7 @@
             border-radius: 8px;
         }
         
-        /* Bottom Navigation Island 
+        /* Bottom Navigation Island */
         .bottom-nav-island {
             position: fixed;
             bottom: 20px;
@@ -231,7 +221,7 @@
         
         .nav-item:hover {
             background: rgba(30, 136, 229, 0.05);
-        }*/
+        }
         
         /* Main content padding for bottom nav */
         main {
