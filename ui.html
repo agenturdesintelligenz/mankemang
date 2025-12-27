@@ -1,0 +1,170 @@
+<!doctype html>
+<html style="--safe-area-top: 44px; --safe-area-bottom: 34px;">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      /*@custom-variant dark (&:where(.dark, .dark *));*/
+      @theme {
+        --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+        --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        
+      }
+
+      @layer components {
+        .toggle {
+          @apply relative inline-flex h-7 w-15 rounded-full appearance-none cursor-pointer transition-colors duration-200 ease-in-out bg-gray-300 before:content-[''] before:transition-transform before:absolute before:w-9 before:h-6 before:m-0.5 before:rounded-full before:bg-white checked:bg-indigo-500 checked:before:translate-x-5;
+        }
+      }
+
+      /* focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 */
+      
+    </style>
+    <script>
+      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      //document.documentElement.classList.toggle(
+      //  "dark",
+      //  localStorage.theme === "dark" ||
+      //  (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      //);
+      // Whenever the user explicitly chooses light mode
+      // localStorage.theme = "light";
+      // Whenever the user explicitly chooses dark mode
+      // localStorage.theme = "dark";
+      // Whenever the user explicitly chooses to respect the OS preference
+      // localStorage.removeItem("theme");
+    </script>
+  </head>
+
+  <body class="bg-neutral-100 text-black dark:bg-black dark:text-white">
+    <div id="app">
+      <div class="w-full h-full min-h-screen relative">
+        <div class="w-full h-full left-0 top-0 overflow-auto absolute">
+          <header
+            class="pt-[max(16px,var(--safe-area-top))] text-md text-black dark:text-white w-full z-20 pointer-events-none top-0 sticky">
+            <div
+              class="backdrop-blur-[2px] absolute left-0 top-0 w-full mask-b-to-100% pointer-events-none mask-b-from-50% h-[calc(max(16px,var(--safe-area-top))_+_44px_+_16px)]">
+            </div>
+            <div
+              class="bg-gradient-to-b from-neutral-100 to-transparent dark:from-black pointer-events-none h-[calc(max(16px,var(--safe-area-top))_+_44px_+_16px)] absolute w-full left-0 top-0">
+            </div>
+            <div class="px-4 h-11 justify-between gap-2 flex relative items-center w-full pointer-events-auto z-10">
+              <button
+                class="rounded-full backdrop-blur-lg bg-neutral-200/75 dark:bg-neutral-800/75 duration-300 inline-flex gap-1 justify-center items-center select-none h-11 w-11 cursor-pointer">
+                <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z">
+                  </path>
+                </svg>
+              </button>
+              <div class="absolute top-1/2 left-1/2 transform-gpu -translate-x-1/2 -translate-y-1/2 text-center">
+                <div class="text-[17px] font-semibold whitespace-nowrap leading-tight">Titlebar</div>
+                <div class="text-sm opacity-75 font-medium leading-none">Subtitle</div>
+              </div>
+              <button
+                class="rounded-full backdrop-blur-lg bg-neutral-200/75 dark:bg-neutral-800/75 duration-300 inline-flex gap-1 justify-center items-center select-none h-11 w-11 cursor-pointer">
+                <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z">
+                  </path>
+                </svg>
+              </button>
+            </div>
+          </header>
+
+          <main class="relative flex flex-col gap-4 pt-4 px-4 pb-24">
+
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+            <div class="rounded-3xl bg-white dark:bg-neutral-950 p-4 h-32"></div>
+
+            <input class="toggle" type="checkbox" role="switch" name="prefers-color-scheme" value="dark" checked />
+
+          </main>
+
+          <footer class="pb-4 px-4 flex justify-center w-full z-20 left-0 bottom-0 fixed">
+            <div
+              class="h-[calc(var(--safe-area-bottom)_+16px_+_64px_+_16px)] backdrop-blur-[2px] absolute left-0 bottom-0 w-full mask-t-from-50% mask-t-to-100% pointer-events-none">
+            </div>
+            <div
+              class="bg-gradient-to-t from-neutral-100 to-transparent dark:from-black bottom-0 absolute w-full left-0 pointer-events-none h-[calc(var(--safe-area-bottom)_+16px_+_64px_+_16px)]">
+            </div>
+            <div class="gap-4 items-stretch w-full md:w-auto flex relative justify-between">
+              <nav
+                class="backdrop-blur-lg bg-neutral-200/75 dark:bg-neutral-800/75 touch-none flex relative justify-between items-center h-full rounded-full group/bar px-3 py-1">
+                <button
+                  class="appearance-none flex flex-col justify-center items-center rounded-full min-w-24 h-11 px-4 py-0.5 -mx-2 cursor-pointer">
+                  <span class="flex items-center justify-center relative">
+                    <span
+                      class="font-semibold text-white bg-red-500 inline-flex items-center justify-center rounded-full text-[8px] min-w-4 min-h-4 px-0.5 absolute -end-1.5 -top-0.5">3</span>
+                    <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+                      <path
+                        d="M120,64.37V16a8,8,0,0,0-16,0V64.37a88,88,0,1,0,16,0ZM183.54,144H151.77c-1.51-28.36-10.79-48.36-19.44-61.06A72.16,72.16,0,0,1,183.54,144Zm-47.78,16c-2,33.52-16.13,52.95-23.76,61.08-7.64-8.15-21.77-27.57-23.76-61.08ZM91.67,82.94C83,95.64,73.74,115.64,72.23,144H40.46A72.16,72.16,0,0,1,91.67,82.94ZM40.46,160H72.23c1.51,28.36,10.79,48.36,19.44,61.06A72.16,72.16,0,0,1,40.46,160ZM256,88a8,8,0,0,1-8,8h-8v8a8,8,0,0,1-16,0V96h-8a8,8,0,0,1,0-16h8V72a8,8,0,0,1,16,0v8h8A8,8,0,0,1,256,88ZM152,40a8,8,0,0,1,8-8h16V16a8,8,0,0,1,16,0V32h16a8,8,0,0,1,0,16H192V64a8,8,0,0,1-16,0V48H160A8,8,0,0,1,152,40Z">
+                      </path>
+                    </svg>
+                  </span>
+                  <span class="text-xs font-medium">Venues</span>
+                </button>
+                <button
+                  class="appearance-none flex flex-col justify-center items-center rounded-full min-w-24 h-11 px-4 py-0.5 -mx-2 cursor-pointer bg-neutral-50/75 dark:bg-neutral-600/75">
+                  <span class="flex items-center justify-center relative">
+                    <span
+                      class="font-semibold text-white bg-red-500 inline-flex items-center justify-center rounded-full text-[8px] min-w-4 min-h-4 px-0.5 absolute -end-1.5 -top-0.5">3</span>
+                    <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+                      <path
+                        d="M152,160a24,24,0,1,1-24-24A24,24,0,0,1,152,160ZM208,40V216a16,16,0,0,1-16,16H64a16,16,0,0,1-16-16V40A16,16,0,0,1,64,24H192A16,16,0,0,1,208,40ZM116,68a12,12,0,1,0,12-12A12,12,0,0,0,116,68Zm52,92a40,40,0,1,0-40,40A40,40,0,0,0,168,160Z">
+                      </path>
+                    </svg>
+                  </span>
+                  <span class="text-xs font-medium">Inventory</span>
+                </button>
+                <button
+                  class="appearance-none flex flex-col justify-center items-center rounded-full min-w-24 h-11 px-4 py-0.5 -mx-2 cursor-pointer">
+                  <span class="flex items-center justify-center relative">
+                    <span
+                      class="font-semibold text-white bg-red-500 inline-flex items-center justify-center rounded-full text-[8px] min-w-4 min-h-4 px-0.5 absolute -end-1.5 -top-0.5">3</span>
+                    <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+                      <path
+                        d="M200,32H163.74a47.92,47.92,0,0,0-71.48,0H56A16,16,0,0,0,40,48V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm-72,0a32,32,0,0,1,32,32H96A32,32,0,0,1,128,32Z">
+                      </path>
+                    </svg>
+                  </span>
+                  <span class="text-xs font-medium">Reports</span>
+                </button>
+              </nav>
+              <button
+                class="rounded-full backdrop-blur-lg bg-neutral-200/75 dark:bg-neutral-800/75 duration-300 inline-flex gap-1 justify-center items-center select-none h-11 w-11 cursor-pointer">
+                <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M156,128a28,28,0,1,1-28-28A28,28,0,0,1,156,128ZM48,100a28,28,0,1,0,28,28A28,28,0,0,0,48,100Zm160,0a28,28,0,1,0,28,28A28,28,0,0,0,208,100Z">
+                  </path>
+                </svg>
+              </button>
+            </div>
+
+          </footer>
+
+
+        </div>
+      </div>
+
+    </div>
+
+  </body>
+
+</html>
